@@ -5,129 +5,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DGAC — Suivi des Audits</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>✈</text></svg>">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DGAC Audits">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #080C18; --card: #0E1326; --card-hover: #121836;
-    --border: rgba(255,255,255,0.06); --border-light: rgba(255,255,255,0.1);
-    --text: #E2E8F0; --muted: rgba(255,255,255,0.4); --dim: rgba(255,255,255,0.25);
-    --accent: #3B82F6; --accent-dark: #1D4ED8;
-    --red: #EF4444; --orange: #F59E0B; --green: #10B981; --purple: #A78BFA; --cyan: #22D3EE;
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{--bg:#080C18;--card:#0E1326;--card-hover:#121836;--border:rgba(255,255,255,0.06);--border-light:rgba(255,255,255,0.1);--text:#E2E8F0;--muted:rgba(255,255,255,0.4);--dim:rgba(255,255,255,0.25);--accent:#3B82F6;--accent-dark:#1D4ED8;--red:#EF4444;--orange:#F59E0B;--green:#10B981;--purple:#A78BFA;--cyan:#22D3EE;--safe-bottom:env(safe-area-inset-bottom,0px)}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+  .mono{font-family:'JetBrains Mono',monospace}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+  .header{padding:14px 28px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:rgba(8,12,24,0.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+  .header-left{display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .header-title{font-size:15px;font-weight:700;letter-spacing:-0.3px}
+  .header-sub{font-size:10px;color:var(--dim);letter-spacing:0.5px}
+  .header-right{display:flex;gap:8px;align-items:center}
+  .desktop-tabs{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.03);border-radius:10px;padding:3px}
+  .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(8,12,24,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:6px 4px;padding-bottom:calc(6px + var(--safe-bottom));z-index:100;justify-content:space-around}
+  .mobile-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:10px;font-family:inherit;font-weight:600;cursor:pointer;padding:6px 6px;border-radius:8px;min-width:50px;position:relative}
+  .mobile-nav-btn.active{color:var(--accent)}
+  .mobile-nav-btn .nav-icon{font-size:20px}
+  .mobile-nav-btn .nav-badge{position:absolute;top:2px;right:4px;font-size:9px;font-weight:700;background:var(--red);color:#fff;padding:1px 5px;border-radius:8px;font-family:'JetBrains Mono',monospace}
+  .tab-btn{padding:7px 14px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;background:transparent;color:var(--muted);transition:all 0.15s}
+  .tab-btn.active{background:rgba(59,130,246,0.2);color:var(--accent)}
+  .tab-count{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,0.06)}
+  .tab-btn.active .tab-count{background:rgba(59,130,246,0.3);color:var(--accent)}
+  .btn{padding:8px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity 0.15s}
+  .btn:hover{opacity:0.85}.btn:disabled{opacity:0.5;cursor:not-allowed}.btn:active{transform:scale(0.97)}
+  .btn-primary{background:var(--accent);color:#fff}.btn-orange{background:var(--orange);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-purple{background:var(--purple);color:#fff}.btn-red{background:var(--red);color:#fff}
+  .btn-outline{padding:7px 14px;background:transparent;border:1px solid rgba(59,130,246,0.3);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--accent)}
+  .btn-outline-red{border-color:rgba(239,68,68,0.3);color:var(--red)}
+  .btn-sm{padding:5px 12px;font-size:11px}.btn-full{width:100%;padding:12px 0}
+  .btn-icon{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:8px}
+  .btn-fab{position:fixed;bottom:80px;right:20px;width:54px;height:54px;border-radius:50%;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.4);z-index:90;display:none;align-items:center;justify-content:center;color:#fff}
+  .input,.select,.textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border-light);border-radius:8px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
+  .input:focus,.select:focus,.textarea:focus{border-color:var(--accent)}.select{cursor:pointer}.textarea{min-height:70px;resize:vertical}
+  .label{font-size:11px;color:var(--muted);margin-bottom:4px;display:block;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px}.card-padded{padding:20px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+  .kpi-bar{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:14px 0 0 14px}
+  .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600}
+  .kpi-value{font-size:28px;font-weight:700;margin-top:4px}.kpi-sub{font-size:11px;color:var(--dim);margin-top:2px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap}
+  .table-container{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .table-row{display:grid;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background 0.1s}
+  .table-row:hover{background:var(--card-hover)}
+  .mobile-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer}
+  .mobile-card:active{border-color:rgba(59,130,246,0.3)}
+  .mobile-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+  .mobile-card-title{font-size:14px;font-weight:600}.mobile-card-id{font-size:11px;color:var(--dim);margin-top:2px}
+  .mobile-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .mobile-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:10px}
+  .modal{background:#111827;border:1px solid var(--border-light);border-radius:16px;padding:24px;max-width:94vw;max-height:90vh;overflow-y:auto;width:540px}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .modal-title{font-size:18px;font-weight:700}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-span{grid-column:1/-1}
+  .filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+  .filter-group{display:flex;gap:3px;background:rgba(255,255,255,0.03);border-radius:8px;padding:3px;flex-wrap:wrap}
+  .filter-btn{padding:6px 12px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);white-space:nowrap}
+  .filter-btn.active{background:rgba(59,130,246,0.2);color:var(--accent)}.spacer{flex:1}
+  .alert{padding:16px 18px;border-radius:12px;margin-bottom:20px}
+  .alert-red{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15)}
+  .alert-title{font-size:14px;font-weight:700;margin-bottom:10px}
+  .empty{padding:40px 20px;text-align:center;color:var(--dim);font-size:14px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .grid-span{grid-column:1/-1}
+  .bar-track{height:6px;background:rgba(255,255,255,0.04);border-radius:3px}.bar-fill{height:100%;border-radius:3px;transition:width 0.4s}
+  .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+  .kanban-col{min-width:170px;flex:1}.kanban-title{font-size:12px;font-weight:700;margin-bottom:10px;padding:0 4px}
+  .kanban-card{padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer}
+  .kanban-card:active{border-color:rgba(59,130,246,0.3)}
+  .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-box{width:420px;max-width:100%}
+  .login-header{text-align:center;margin-bottom:32px}.login-icon{font-size:48px;margin-bottom:14px}
+  .login-title{font-size:22px;font-weight:700}.login-sub{color:var(--muted);font-size:14px;margin-top:6px}
+  .error-box{padding:10px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:var(--red);font-size:12px;margin-bottom:14px}
+  .user-badge{display:flex;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted)}
+  .user-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+  /* Chart specific */
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+  .chart-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+  .chart-center{display:flex;justify-content:center;align-items:center}
+  .donut-legend{margin-top:14px}
+  .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+  .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+  .legend-val{margin-left:auto;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .pipeline{display:flex;gap:2px;align-items:flex-end;height:100px;padding-top:10px}
+  .pipeline-bar{flex:1;border-radius:6px 6px 0 0;transition:height 0.5s;min-width:20px;position:relative;cursor:pointer}
+  .pipeline-bar:hover{opacity:0.8}
+  .pipeline-label{font-size:9px;color:var(--muted);text-align:center;margin-top:6px;font-weight:600;line-height:1.2}
+  .pipeline-count{font-size:13px;font-weight:700;text-align:center;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+  .progress-ring{transform:rotate(-90deg)}
+  .section-title{font-size:16px;font-weight:700;margin-bottom:16px;margin-top:28px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .section-title:first-child{margin-top:0}
+  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+  .stat-row:last-child{border:none}
+  @media(max-width:768px){
+    .header{padding:12px 16px}.header-title{font-size:14px}.header-sub{display:none}
+    .desktop-tabs{display:none!important}.header-right .user-badge{display:none}.header-right .btn-outline:not(.btn-outline-red){display:none}
+    .mobile-nav{display:flex!important}.btn-fab{display:flex!important}
+    main{padding:16px 14px 100px 14px!important}
+    .filters{gap:8px}.filter-group{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+    .filter-btn{padding:6px 10px;font-size:10px;flex-shrink:0}
+    .form-grid{grid-template-columns:1fr}.form-span{grid-column:1}
+    .grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}.grid-span{grid-column:1}
+    .modal{padding:20px 16px;width:100%;max-width:100%;border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:92vh}
+    .modal-overlay{align-items:flex-end;padding:0}
+    .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}.kpi{padding:14px 16px}.kpi-value{font-size:24px}.kpi-label{font-size:9px}
+    .desktop-only{display:none!important}.mobile-only{display:block!important}
+    .input,.select,.textarea{font-size:16px;padding:12px}.btn{padding:10px 18px;font-size:14px}.btn-full{padding:14px 0}
+    .filters .btn{display:none}.alert{padding:14px 16px}
+    .chart-card{padding:16px}
   }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-  .header {
-    padding: 14px 28px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-    background: rgba(8,12,24,0.95); backdrop-filter: blur(10px);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .logo {
-    width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-  }
-  .header-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-  .header-sub { font-size: 10px; color: var(--dim); letter-spacing: 0.5px; }
-  .tabs { display: flex; align-items: center; gap: 3px; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 3px; flex-wrap: wrap; }
-  .tab-btn {
-    padding: 7px 14px; border-radius: 7px; border: none; font-size: 12px; font-weight: 600;
-    cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px;
-    background: transparent; color: var(--muted); transition: all 0.15s;
-  }
-  .tab-btn.active { background: rgba(59,130,246,0.2); color: var(--accent); }
-  .tab-count {
-    font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
-    padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,0.06);
-  }
-  .tab-btn.active .tab-count { background: rgba(59,130,246,0.3); color: var(--accent); }
-  .btn {
-    padding: 8px 18px; border: none; border-radius: 8px; font-size: 13px;
-    font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s;
-  }
-  .btn:hover { opacity: 0.85; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-orange { background: var(--orange); color: #fff; }
-  .btn-green { background: var(--green); color: #fff; }
-  .btn-purple { background: var(--purple); color: #fff; }
-  .btn-red { background: var(--red); color: #fff; }
-  .btn-outline { padding: 7px 14px; background: transparent; border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--accent); }
-  .btn-outline-red { border-color: rgba(239,68,68,0.3); color: var(--red); }
-  .btn-sm { padding: 5px 12px; font-size: 11px; }
-  .btn-full { width: 100%; padding: 11px 0; }
-  .btn-icon { background: none; border: none; color: var(--dim); cursor: pointer; font-size: 14px; padding: 4px; }
-  .input, .select, .textarea {
-    width: 100%; padding: 9px 12px; background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-light); border-radius: 8px; color: var(--text);
-    font-size: 13px; outline: none; font-family: inherit;
-  }
-  .input:focus, .select:focus, .textarea:focus { border-color: var(--accent); }
-  .select { cursor: pointer; }
-  .textarea { min-height: 60px; resize: vertical; }
-  .label { font-size: 11px; color: var(--muted); margin-bottom: 3px; display: block; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
-  .card-padded { padding: 20px; }
-  .kpi-grid { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
-  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; flex: 1; min-width: 155; position: relative; overflow: hidden; }
-  .kpi-bar { position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 14px 0 0 14px; }
-  .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-weight: 600; }
-  .kpi-value { font-size: 30px; font-weight: 700; margin-top: 5px; }
-  .kpi-sub { font-size: 11px; color: var(--dim); margin-top: 3px; }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .table-container { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .table-row { display: grid; padding: 12px 18px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background 0.1s; }
-  .table-row:hover { background: var(--card-hover); }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .modal { background: #111827; border: 1px solid var(--border-light); border-radius: 16px; padding: 28px 30px; max-width: 94vw; max-height: 88vh; overflow-y: auto; }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
-  .modal-title { font-size: 18px; font-weight: 700; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-span { grid-column: 1 / -1; }
-  .filters { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-  .filter-group { display: flex; gap: 3px; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 3px; flex-wrap: wrap; }
-  .filter-btn { padding: 5px 13px; border-radius: 6px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; background: transparent; color: var(--muted); }
-  .filter-btn.active { background: rgba(59,130,246,0.2); color: var(--accent); }
-  .spacer { flex: 1; }
-  .alert { padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; }
-  .alert-red { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); }
-  .alert-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .empty { padding: 48px; text-align: center; color: var(--dim); font-size: 14px; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .grid-span { grid-column: 1 / -1; }
-  .bar-track { height: 6px; background: rgba(255,255,255,0.04); border-radius: 3px; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
-  .kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
-  .kanban-col { min-width: 200px; flex: 1; }
-  .kanban-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; padding: 0 4px; }
-  .kanban-card { padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
-  .kanban-card:hover { border-color: rgba(59,130,246,0.3); }
-  .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .login-box { width: 420px; max-width: 100%; }
-  .login-header { text-align: center; margin-bottom: 36px; }
-  .login-icon { font-size: 48px; margin-bottom: 14px; }
-  .login-title { font-size: 24px; font-weight: 700; }
-  .login-sub { color: var(--muted); font-size: 14px; margin-top: 6px; }
-  .error-box { padding: 10px 14px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; color: var(--red); font-size: 12px; margin-bottom: 14px; }
-  .success-box { padding: 10px 14px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; color: var(--green); font-size: 12px; margin-bottom: 14px; }
-  .user-badge { display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; font-size: 12px; color: var(--muted); }
-  .user-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-  @media (max-width: 900px) {
-    .header { flex-wrap: wrap; gap: 10px; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .kpi-grid { flex-direction: column; }
-  }
-  @media (max-width: 600px) {
-    .header { padding: 10px 14px; }
-    main { padding: 14px !important; }
-    .table-row { font-size: 11px; padding: 10px 12px; }
-    .form-grid { grid-template-columns: 1fr; }
-  }
+  @media(min-width:769px){.mobile-only{display:none!important}.mobile-nav{display:none!important}.btn-fab{display:none!important}}
 </style>
 </head>
 <body>
@@ -136,438 +128,262 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+const{useState,useEffect,useCallback}=React;
+const SB_URL="https://apfcujkxcxhfrjbafgaa.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwZmN1amt4Y3hoZnJqYmFmZ2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjA0NTksImV4cCI6MjA4Njg5NjQ1OX0.S-29PtjyHn1knDIfdVERhLXCDh_JS0tc3oZqAEqwVQ0";
+const authApi={async login(e,p){const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||"Échec");return d},async logout(t){await fetch(`${SB_URL}/auth/v1/logout`,{method:"POST",headers:{apikey:SB_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json"}})},async getUser(t){const r=await fetch(`${SB_URL}/auth/v1/user`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${t}`}});if(!r.ok)throw new Error("Expiré");return r.json()}};
+const createApi=(t)=>{const h={apikey:SB_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json",Prefer:"return=representation"};const b=`${SB_URL}/rest/v1`;return{async select(tb,q=""){const r=await fetch(`${b}/${tb}?${q}`,{headers:h});if(!r.ok)throw new Error(r.statusText);return r.json()},async insert(tb,d){const r=await fetch(`${b}/${tb}`,{method:"POST",headers:h,body:JSON.stringify(d)});if(!r.ok){const e=await r.json();throw new Error(e.message||r.statusText)}return r.json()},async update(tb,id,d){const r=await fetch(`${b}/${tb}?id=eq.${id}`,{method:"PATCH",headers:h,body:JSON.stringify(d)});if(!r.ok)throw new Error(r.statusText);return r.json()},async remove(tb,id){const r=await fetch(`${b}/${tb}?id=eq.${id}`,{method:"DELETE",headers:h});if(!r.ok)throw new Error(r.statusText);return true}}};
+
+const DOMAINES=["PEL","OPS","AIR","ANS","AIG","LEG","ORG","AGA"];const TYPES_AUDIT=["Interne","Externe","Suivi","Spécial"];const STATUTS_AUDIT=["Planifié","En cours","Rapport émis","En suivi","Clôturé"];const CLASSEMENTS=["NC","PC","OBS","OFI"];const CRITICITES=["Bloquant","Majeur","Mineur"];const STATUTS_FINDING=["Ouvert","CAPA demandée","CAPA acceptée","En cours","Vérification","Clôturé"];const STATUTS_CAPA=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace","Rejetée"];const TYPES_PREUVE=["Procédure","Enregistrement","Formation","Capture","Email","Rapport","Autre"];const STATUTS_PREUVE=["Soumise","Acceptée","Refusée"];
+const SC={"Planifié":"#3B82F6","En cours":"#F59E0B","Rapport émis":"#A78BFA","En suivi":"#22D3EE","Clôturé":"#10B981","Ouvert":"#EF4444","CAPA demandée":"#F59E0B","CAPA acceptée":"#22D3EE","Vérification":"#A78BFA","Brouillon":"rgba(255,255,255,0.4)","Soumise":"#F59E0B","Acceptée":"#22D3EE","Réalisée":"#10B981","Vérifiée efficace":"#10B981","Rejetée":"#EF4444","Refusée":"#EF4444"};
+const CC={"Bloquant":"#EF4444","Majeur":"#F59E0B","Mineur":"#22D3EE"};const XC={"NC":"#EF4444","PC":"#F59E0B","OBS":"#3B82F6","OFI":"#10B981"};
 
 // ============================================================
-// CONFIG SUPABASE
+// SHARED COMPONENTS
 // ============================================================
-const SB_URL = "https://apfcujkxcxhfrjbafgaa.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwZmN1amt4Y3hoZnJqYmFmZ2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjA0NTksImV4cCI6MjA4Njg5NjQ1OX0.S-29PtjyHn1knDIfdVERhLXCDh_JS0tc3oZqAEqwVQ0";
+function Badge({children,color}){return <span className="badge" style={{background:`${color||'#888'}18`,color:color||'#888'}}>{children}</span>}
+function Tag({label}){return <Badge color={SC[label]}>{label}</Badge>}
+function Empty({text}){return <div className="empty">{text}</div>}
+function KPI({label,value,sub,color,pct}){return(<div className="kpi"><div className="kpi-bar" style={{background:color}}/><div className="kpi-label">{label}</div><div style={{display:'flex',alignItems:'flex-end',gap:8}}><div className="kpi-value mono" style={{color}}>{value}</div>{pct!==undefined&&<div style={{fontSize:12,fontWeight:700,marginBottom:4,color:pct>=50?'var(--red)':'var(--green)'}}>{pct}%</div>}</div>{sub&&<div className="kpi-sub">{sub}</div>}</div>)}
+function Modal({onClose,title,width,children}){return(<div className="modal-overlay" onClick={onClose}><div className="modal" style={{width:width||540}} onClick={e=>e.stopPropagation()}><div className="modal-header"><h3 className="modal-title">{title}</h3><button className="btn-icon" onClick={onClose} style={{fontSize:20}}>✕</button></div>{children}</div></div>)}
+function Field({label,span,children}){return <div className={span?"form-span":""}><label className="label">{label}</label>{children}</div>}
+function Sel({value,onChange,options}){return(<select className="select" value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>)}
+function ConfirmDelete({item,onConfirm,onCancel}){return(<Modal onClose={onCancel} title="Supprimer ?" width={400}><p style={{color:'var(--muted)',fontSize:14,lineHeight:1.6}}>Supprimer <strong style={{color:'var(--red)'}}>{item}</strong> ?</p><div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:20}}><button className="btn btn-outline" onClick={onCancel}>Annuler</button><button className="btn btn-red" onClick={onConfirm}>Supprimer</button></div></Modal>)}
+function FAB({onClick,color}){return(<button className="btn-fab" style={{background:color||'var(--accent)'}} onClick={onClick}>+</button>)}
 
 // ============================================================
-// AUTH API
+// CHART COMPONENTS
 // ============================================================
-const authApi = {
-  async login(email, password) {
-    const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
-      method: "POST",
-      headers: { apikey: SB_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error_description || data.msg || "Échec de connexion");
-    return data;
-  },
-  async logout(token) {
-    await fetch(`${SB_URL}/auth/v1/logout`, {
-      method: "POST",
-      headers: { apikey: SB_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    });
-  },
-  async getUser(token) {
-    const r = await fetch(`${SB_URL}/auth/v1/user`, {
-      headers: { apikey: SB_KEY, Authorization: `Bearer ${token}` },
-    });
-    if (!r.ok) throw new Error("Session expirée");
-    return r.json();
-  },
-};
-
-// ============================================================
-// DATA API (uses auth token)
-// ============================================================
-const createApi = (token) => {
-  const headers = {
-    apikey: SB_KEY, Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json", Prefer: "return=representation",
-  };
-  const base = `${SB_URL}/rest/v1`;
-  return {
-    async select(table, query = "") {
-      const r = await fetch(`${base}/${table}?${query}`, { headers });
-      if (!r.ok) throw new Error(`GET ${table}: ${r.statusText}`);
-      return r.json();
-    },
-    async insert(table, data) {
-      const r = await fetch(`${base}/${table}`, { method: "POST", headers, body: JSON.stringify(data) });
-      if (!r.ok) { const e = await r.json(); throw new Error(e.message || r.statusText); }
-      return r.json();
-    },
-    async update(table, id, data) {
-      const r = await fetch(`${base}/${table}?id=eq.${id}`, { method: "PATCH", headers, body: JSON.stringify(data) });
-      if (!r.ok) throw new Error(`PATCH ${table}: ${r.statusText}`);
-      return r.json();
-    },
-    async remove(table, id) {
-      const r = await fetch(`${base}/${table}?id=eq.${id}`, { method: "DELETE", headers });
-      if (!r.ok) throw new Error(`DELETE ${table}: ${r.statusText}`);
-      return true;
-    },
-  };
-};
-
-// ============================================================
-// CONSTANTS
-// ============================================================
-const DOMAINES=["PEL","OPS","AIR","ANS","AIG","LEG","ORG","AGA"];
-const TYPES_AUDIT=["Interne","Externe","Suivi","Spécial"];
-const STATUTS_AUDIT=["Planifié","En cours","Rapport émis","En suivi","Clôturé"];
-const CLASSEMENTS=["NC","PC","OBS","OFI"];
-const CRITICITES=["Bloquant","Majeur","Mineur"];
-const STATUTS_FINDING=["Ouvert","CAPA demandée","CAPA acceptée","En cours","Vérification","Clôturé"];
-const STATUTS_CAPA=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace","Rejetée"];
-const TYPES_PREUVE=["Procédure","Enregistrement","Formation","Capture","Email","Rapport","Autre"];
-const STATUTS_PREUVE=["Soumise","Acceptée","Refusée"];
-const STATUS_COLORS={"Planifié":"#3B82F6","En cours":"#F59E0B","Rapport émis":"#A78BFA","En suivi":"#22D3EE","Clôturé":"#10B981","Ouvert":"#EF4444","CAPA demandée":"#F59E0B","CAPA acceptée":"#22D3EE","Vérification":"#A78BFA","Brouillon":"rgba(255,255,255,0.4)","Soumise":"#F59E0B","Acceptée":"#22D3EE","Réalisée":"#10B981","Vérifiée efficace":"#10B981","Rejetée":"#EF4444","Refusée":"#EF4444"};
-const CRIT_COLORS={"Bloquant":"#EF4444","Majeur":"#F59E0B","Mineur":"#22D3EE"};
-const CLASS_COLORS={"NC":"#EF4444","PC":"#F59E0B","OBS":"#3B82F6","OFI":"#10B981"};
-
-// ============================================================
-// SMALL COMPONENTS
-// ============================================================
-function Badge({children,color}){return <span className="badge" style={{background:`${color||'#888'}18`,color:color||'#888'}}>{children}</span>;}
-function Tag({label}){return <Badge color={STATUS_COLORS[label]}>{label}</Badge>;}
-function Empty({text}){return <div className="empty">{text}</div>;}
-function KPI({label,value,sub,color}){
-  return(<div className="kpi"><div className="kpi-bar" style={{background:color}}/><div className="kpi-label">{label}</div><div className="kpi-value mono" style={{color}}>{value}</div>{sub&&<div className="kpi-sub">{sub}</div>}</div>);
-}
-function Modal({onClose,title,width,children}){
-  return(<div className="modal-overlay" onClick={onClose}><div className="modal" style={{width:width||540}} onClick={e=>e.stopPropagation()}><div className="modal-header"><h3 className="modal-title">{title}</h3><button className="btn-icon" onClick={onClose} style={{fontSize:20}}>✕</button></div>{children}</div></div>);
-}
-function Field({label,span,children}){return <div className={span?"form-span":""}><label className="label">{label}</label>{children}</div>;}
-function Sel({value,onChange,options,className=""}){return(<select className={`select ${className}`} value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>);}
-function ConfirmDelete({item,onConfirm,onCancel}){
-  return(<Modal onClose={onCancel} title="Confirmer la suppression" width={400}><p style={{color:'var(--muted)',fontSize:14,lineHeight:1.6}}>Supprimer <strong style={{color:'var(--red)'}}>{item}</strong> ? Cette action est irréversible.</p><div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:20}}><button className="btn btn-outline" onClick={onCancel}>Annuler</button><button className="btn btn-red" onClick={onConfirm}>Supprimer</button></div></Modal>);
-}
-
-// ============================================================
-// LOGIN SCREEN
-// ============================================================
-function LoginScreen({onLogin}) {
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [loading,setLoading]=useState(false);
-  const [error,setError]=useState("");
-
-  const handleLogin=async(e)=>{
-    e.preventDefault();
-    if(!email||!password){setError("Veuillez remplir les deux champs");return;}
-    setLoading(true);setError("");
-    try{
-      const data=await authApi.login(email,password);
-      localStorage.setItem("sb_token",data.access_token);
-      localStorage.setItem("sb_refresh",data.refresh_token);
-      localStorage.setItem("sb_user_email",data.user.email);
-      onLogin(data.access_token,data.user);
-    }catch(e){
-      setError(e.message==="Invalid login credentials"?"Email ou mot de passe incorrect":e.message);
-    }
-    setLoading(false);
-  };
-
+function DonutChart({data,size=140,thickness=22,centerLabel,centerValue}){
+  const total=data.reduce((s,d)=>s+d.value,0);if(total===0)return(<div className="chart-center" style={{height:size}}><span style={{color:'var(--dim)',fontSize:13}}>Aucune donnée</span></div>);
+  const r=(size-thickness)/2;const cx=size/2;const cy=size/2;const circ=2*Math.PI*r;
+  let offset=0;
   return(
-    <div className="login-page">
-      <div className="login-box">
-        <div className="login-header">
-          <div className="login-icon">✈️</div>
-          <h1 className="login-title">DGAC — Suivi des Audits</h1>
-          <p className="login-sub">Connectez-vous pour accéder à la plateforme</p>
-        </div>
-        <div className="card card-padded">
-          <div style={{marginBottom:18}}>
-            <label className="label">Email</label>
-            <input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)}
-              placeholder="votre.email@dgac.tn" onKeyDown={e=>e.key==='Enter'&&handleLogin(e)}/>
-          </div>
-          <div style={{marginBottom:18}}>
-            <label className="label">Mot de passe</label>
-            <input className="input" type="password" value={password} onChange={e=>setPassword(e.target.value)}
-              placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&handleLogin(e)}/>
-          </div>
-          {error&&<div className="error-box">{error}</div>}
-          <button className="btn btn-primary btn-full" onClick={handleLogin} disabled={loading}
-            style={{background:'linear-gradient(135deg,#3B82F6,#1D4ED8)',opacity:loading?0.6:1}}>
-            {loading?"Connexion en cours...":"Se connecter"}
-          </button>
-        </div>
-        <p style={{textAlign:'center',marginTop:16,fontSize:12,color:'var(--dim)'}}>
-          Direction Générale de l'Aviation Civile — Tunisie
-        </p>
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+      <svg width={size} height={size} style={{overflow:'visible'}}>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth={thickness}/>
+        {data.filter(d=>d.value>0).map((d,i)=>{
+          const pct=d.value/total;const len=pct*circ;const gap=data.filter(x=>x.value>0).length>1?2:0;
+          const dash=`${Math.max(0,len-gap)} ${circ-Math.max(0,len-gap)}`;
+          const el=<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={d.color} strokeWidth={thickness}
+            strokeDasharray={dash} strokeDashoffset={-offset} strokeLinecap="round"
+            className="progress-ring" style={{transition:'stroke-dasharray 0.6s,stroke-dashoffset 0.6s'}}/>;
+          offset+=len;return el;
+        })}
+        {centerLabel&&<><text x={cx} y={cy-6} textAnchor="middle" fill="var(--text)" fontSize="22" fontWeight="700" fontFamily="JetBrains Mono">{centerValue}</text><text x={cx} y={cy+12} textAnchor="middle" fill="var(--muted)" fontSize="10" fontWeight="600" letterSpacing="0.5">{centerLabel}</text></>}
+      </svg>
+      <div className="donut-legend">
+        {data.filter(d=>d.value>0).map((d,i)=>(
+          <div key={i} className="legend-item"><div className="legend-dot" style={{background:d.color}}/><span style={{color:'var(--muted)'}}>{d.label}</span><span className="legend-val" style={{color:d.color}}>{d.value}</span></div>
+        ))}
       </div>
     </div>
   );
 }
 
+function BarChartH({data,maxVal}){
+  const mx=maxVal||Math.max(...data.map(d=>d.value),1);
+  return(<div>{data.map((d,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+    <span className="mono" style={{width:36,fontSize:12,fontWeight:700,color:d.color||'var(--accent)',textAlign:'center'}}>{d.label}</span>
+    <div className="bar-track" style={{flex:1,height:10,borderRadius:5}}><div className="bar-fill" style={{width:`${(d.value/mx)*100}%`,background:d.color||'var(--accent)',height:10,borderRadius:5}}/></div>
+    <span className="mono" style={{fontSize:12,color:'var(--muted)',width:28,textAlign:'right'}}>{d.value}</span>
+  </div>))}</div>);
+}
+
+function PipelineChart({data}){
+  const mx=Math.max(...data.map(d=>d.value),1);
+  return(<div>
+    <div className="pipeline">{data.map((d,i)=>(<div key={i} style={{flex:1,textAlign:'center'}}>
+      <div className="pipeline-count" style={{color:d.color}}>{d.value}</div>
+      <div style={{height:80,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+        <div className="pipeline-bar" style={{width:'100%',height:`${Math.max((d.value/mx)*100,6)}%`,background:d.color,opacity:0.7}}/>
+      </div>
+      <div className="pipeline-label">{d.label}</div>
+    </div>))}</div>
+    <div style={{display:'flex',gap:0,marginTop:4}}>{data.map((d,i)=>(<div key={i} style={{flex:1,display:'flex',justifyContent:'center'}}>{i<data.length-1&&<span style={{color:'var(--dim)',fontSize:12,marginLeft:'auto'}}>→</span>}</div>))}</div>
+  </div>);
+}
+
+function ProgressGauge({value,max,label,color}){
+  const pct=max>0?Math.round((value/max)*100):0;
+  return(<div style={{textAlign:'center'}}>
+    <svg width={80} height={50} viewBox="0 0 80 50">
+      <path d="M 10 45 A 30 30 0 0 1 70 45" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" strokeLinecap="round"/>
+      <path d="M 10 45 A 30 30 0 0 1 70 45" fill="none" stroke={color} strokeWidth="6" strokeLinecap="round"
+        strokeDasharray={`${(pct/100)*94.25} 94.25`} style={{transition:'stroke-dasharray 0.6s'}}/>
+      <text x="40" y="42" textAnchor="middle" fill={color} fontSize="16" fontWeight="700" fontFamily="JetBrains Mono">{pct}%</text>
+    </svg>
+    <div style={{fontSize:10,color:'var(--muted)',fontWeight:600,marginTop:2}}>{label}</div>
+  </div>);
+}
+
 // ============================================================
-// DASHBOARD
+// LOGIN
+// ============================================================
+function LoginScreen({onLogin}){
+  const[email,setEmail]=useState("");const[pw,setPw]=useState("");const[ld,setLd]=useState(false);const[err,setErr]=useState("");
+  const go=async()=>{if(!email||!pw){setErr("Remplissez les deux champs");return}setLd(true);setErr("");try{const d=await authApi.login(email,pw);localStorage.setItem("sb_token",d.access_token);localStorage.setItem("sb_user_email",d.user.email);onLogin(d.access_token,d.user)}catch(e){setErr(e.message==="Invalid login credentials"?"Email ou mot de passe incorrect":e.message)}setLd(false)};
+  return(<div className="login-page"><div className="login-box"><div className="login-header"><div className="login-icon">✈️</div><h1 className="login-title">DGAC — Suivi des Audits</h1><p className="login-sub">Connectez-vous pour accéder</p></div><div className="card card-padded"><div style={{marginBottom:16}}><label className="label">Email</label><input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="votre.email@dgac.tn" onKeyDown={e=>e.key==='Enter'&&go()}/></div><div style={{marginBottom:16}}><label className="label">Mot de passe</label><input className="input" type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&go()}/></div>{err&&<div className="error-box">{err}</div>}<button className="btn btn-primary btn-full" onClick={go} disabled={ld} style={{background:'linear-gradient(135deg,#3B82F6,#1D4ED8)'}}>{ld?"Connexion...":"Se connecter"}</button></div><p style={{textAlign:'center',marginTop:14,fontSize:12,color:'var(--dim)'}}>Direction Générale de l'Aviation Civile — Tunisie</p></div></div>)
+}
+
+// ============================================================
+// ENHANCED DASHBOARD
 // ============================================================
 function Dashboard({audits,findings,capa,preuves,onNav}){
   const today=new Date().toISOString().slice(0,10);
   const open=findings.filter(f=>f.statut!=="Clôturé");
+  const closed=findings.filter(f=>f.statut==="Clôturé");
   const overdue=open.filter(f=>f.echeance&&f.echeance<today);
-  const bloquants=open.filter(f=>f.criticite==="Bloquant");
-  const aValider=preuves.filter(p=>p.statut==="Soumise");
+  const bloq=open.filter(f=>f.criticite==="Bloquant");
+  const aVal=preuves.filter(p=>p.statut==="Soumise");
   const actifs=audits.filter(a=>["En cours","Rapport émis","En suivi"].includes(a.statut));
-  const byDomaine={};
-  findings.forEach(f=>{const a=audits.find(au=>au.id===f.audit_uuid);const d=a?.domaine||"?";byDomaine[d]=(byDomaine[d]||0)+1;});
-  const domSorted=Object.entries(byDomaine).sort((a,b)=>b[1]-a[1]);
-  const maxD=domSorted.length>0?domSorted[0][1]:1;
+  const closureRate=findings.length>0?Math.round((closed.length/findings.length)*100):0;
+  const overdueRate=open.length>0?Math.round((overdue.length/open.length)*100):0;
+
+  // Data for donut: Audit statuts
+  const auditStatData=STATUTS_AUDIT.map(s=>({label:s,value:audits.filter(a=>a.statut===s).length,color:SC[s]}));
+  // Data for donut: Finding classements
+  const classData=CLASSEMENTS.map(c=>({label:c,value:findings.filter(f=>f.classement===c).length,color:XC[c]}));
+  // Data for donut: Finding criticités (open only)
+  const critData=CRITICITES.map(c=>({label:c,value:open.filter(f=>f.criticite===c).length,color:CC[c]}));
+  // Data for domaines
+  const byD={};findings.forEach(f=>{const a=audits.find(au=>au.id===f.audit_uuid);const d=a?.domaine||"?";byD[d]=(byD[d]||0)+1});
+  const domData=Object.entries(byD).sort((a,b)=>b[1]-a[1]).map(([d,n])=>({label:d,value:n,color:'var(--accent)'}));
+  // CAPA pipeline
+  const capaPipe=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée"].map(s=>{
+    const full=s==="Vérifiée"?"Vérifiée efficace":s;
+    return{label:s,value:capa.filter(c=>c.statut===full).length,color:SC[full]||'#888'};
+  });
+  // Finding statut pipeline
+  const findPipe=["Ouvert","CAPA demandée","En cours","Vérification","Clôturé"].map(s=>({label:s==="CAPA demandée"?"CAPA dem.":s,value:findings.filter(f=>f.statut===s).length,color:SC[s]}));
 
   return(<div>
+    {/* === KPIs === */}
     <div className="kpi-grid">
       <KPI label="Audits actifs" value={actifs.length} sub={`${audits.length} total`} color="#3B82F6"/>
       <KPI label="Écarts ouverts" value={open.length} sub={`${findings.length} total`} color="#F59E0B"/>
-      <KPI label="Bloquants" value={bloquants.length} sub="Criticité haute" color="#EF4444"/>
-      <KPI label="En retard" value={overdue.length} sub="Échéance dépassée" color="#EF4444"/>
-      <KPI label="Preuves à valider" value={aValider.length} sub={`${preuves.length} total`} color="#A78BFA"/>
+      <KPI label="Bloquants" value={bloq.length} sub="Criticité haute" color="#EF4444"/>
+      <KPI label="En retard" value={overdue.length} sub={open.length>0?`${overdueRate}% des ouverts`:""} color="#EF4444" pct={overdueRate}/>
+      <KPI label="Taux clôture" value={`${closureRate}%`} sub={`${closed.length} / ${findings.length}`} color="#10B981"/>
     </div>
-    {overdue.length>0&&(<div className="alert alert-red">
-      <div className="alert-title" style={{color:'var(--red)'}}>⚠ Top {Math.min(overdue.length,10)} retards</div>
-      {overdue.sort((a,b)=>{const da=Math.ceil((new Date(today)-new Date(a.echeance))/86400000);const db=Math.ceil((new Date(today)-new Date(b.echeance))/86400000);return db-da;}).slice(0,10).map((f,i)=>{
-        const days=Math.ceil((new Date(today)-new Date(f.echeance))/86400000);const au=audits.find(a=>a.id===f.audit_uuid);
-        return(<div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:i<9?'1px solid var(--border)':'none'}}>
-          <div style={{fontSize:13,color:'rgba(255,255,255,0.6)'}}><span className="mono" style={{color:'var(--dim)',fontSize:11,marginRight:8}}>{f.finding_id}</span>{au?.entite} — {f.titre?.slice(0,50)}{f.titre?.length>50?"…":""}</div>
-          <Badge color="#EF4444">{days}j retard</Badge></div>);
-      })}</div>)}
-    <div className="grid-2">
-      <div className="card card-padded">
-        <div style={{fontSize:13,fontWeight:700,marginBottom:16}}>Écarts ouverts par criticité</div>
-        {CRITICITES.map(c=>{const count=open.filter(f=>f.criticite===c).length;const pct=open.length>0?(count/open.length)*100:0;
-          return(<div key={c} style={{marginBottom:12}}><div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:4}}><span style={{color:CRIT_COLORS[c],fontWeight:600}}>{c}</span><span className="mono" style={{color:'var(--muted)'}}>{count}</span></div><div className="bar-track"><div className="bar-fill" style={{width:`${pct}%`,background:CRIT_COLORS[c]}}/></div></div>);
-        })}
+
+    {/* === RETARDS ALERT === */}
+    {overdue.length>0&&(<div className="alert alert-red"><div className="alert-title" style={{color:'var(--red)'}}>⚠ Écarts en retard ({overdue.length})</div>{overdue.sort((a,b)=>Math.ceil((new Date(today)-new Date(b.echeance))/864e5)-Math.ceil((new Date(today)-new Date(a.echeance))/864e5)).slice(0,8).map((f,i)=>{const days=Math.ceil((new Date(today)-new Date(f.echeance))/864e5);const au=audits.find(a=>a.id===f.audit_uuid);return(<div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:i<7?'1px solid var(--border)':'none',gap:8}}><div style={{fontSize:13,color:'rgba(255,255,255,0.6)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}><span className="mono" style={{color:'var(--dim)',fontSize:11,marginRight:6}}>{f.finding_id}</span>{au?.entite} — {f.titre?.slice(0,35)}</div><div style={{display:'flex',gap:6,flexShrink:0}}><Badge color={CC[f.criticite]}>{f.criticite}</Badge><Badge color="#EF4444">{days}j</Badge></div></div>)})}</div>)}
+
+    {/* === CHARTS ROW 1: 3 Donut Charts === */}
+    <div className="section-title">📊 Vue d'ensemble</div>
+    <div className="grid-3" style={{marginBottom:20}}>
+      <div className="chart-card">
+        <div className="chart-title">Statuts des audits</div>
+        <DonutChart data={auditStatData} centerLabel="AUDITS" centerValue={audits.length}/>
       </div>
-      <div className="card card-padded">
-        <div style={{fontSize:13,fontWeight:700,marginBottom:16}}>Récurrence par domaine</div>
-        {domSorted.length===0&&<div style={{color:'var(--dim)',fontSize:13}}>Aucune donnée</div>}
-        {domSorted.map(([dom,count])=>(<div key={dom} style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}><span className="mono" style={{width:36,fontSize:12,fontWeight:700,color:'var(--accent)'}}>{dom}</span><div className="bar-track" style={{flex:1}}><div className="bar-fill" style={{width:`${(count/maxD)*100}%`,background:'var(--accent)'}}/></div><span className="mono" style={{fontSize:12,color:'var(--muted)',width:24,textAlign:'right'}}>{count}</span></div>))}
+      <div className="chart-card">
+        <div className="chart-title">Classement des écarts</div>
+        <DonutChart data={classData} centerLabel="ÉCARTS" centerValue={findings.length}/>
       </div>
-      <div className="card card-padded grid-span">
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
-          <span style={{fontSize:13,fontWeight:700}}>Audits actifs</span>
-          <button className="btn-outline btn-sm" onClick={()=>onNav("audits")}>Voir tout →</button>
+      <div className="chart-card">
+        <div className="chart-title">Criticité (ouverts)</div>
+        <DonutChart data={critData} centerLabel="OUVERTS" centerValue={open.length}/>
+      </div>
+    </div>
+
+    {/* === CHARTS ROW 2: Pipelines === */}
+    <div className="grid-2" style={{marginBottom:20}}>
+      <div className="chart-card">
+        <div className="chart-title">Pipeline des écarts</div>
+        <PipelineChart data={findPipe}/>
+      </div>
+      <div className="chart-card">
+        <div className="chart-title">Pipeline CAPA</div>
+        <PipelineChart data={capaPipe}/>
+      </div>
+    </div>
+
+    {/* === CHARTS ROW 3: Domaines + Gauges + Actifs === */}
+    <div className="grid-2" style={{marginBottom:20}}>
+      <div className="chart-card">
+        <div className="chart-title">Écarts par domaine <span style={{fontSize:11,color:'var(--dim)',fontWeight:400}}>(récurrence)</span></div>
+        {domData.length===0?<div style={{color:'var(--dim)',fontSize:13}}>Aucune donnée</div>:<BarChartH data={domData}/>}
+      </div>
+      <div className="chart-card">
+        <div className="chart-title">Indicateurs clés</div>
+        <div style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:12,padding:'10px 0'}}>
+          <ProgressGauge value={closed.length} max={findings.length} label="Clôture" color="#10B981"/>
+          <ProgressGauge value={preuves.filter(p=>p.statut==="Acceptée").length} max={preuves.length} label="Preuves OK" color="#22D3EE"/>
+          <ProgressGauge value={capa.filter(c=>["Réalisée","Vérifiée efficace"].includes(c.statut)).length} max={capa.length} label="CAPA réalisées" color="#A78BFA"/>
         </div>
-        {actifs.length===0&&<div style={{color:'var(--dim)',fontSize:13}}>Aucun audit actif</div>}
-        {actifs.slice(0,6).map(a=>{const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;
-          return(<div key={a.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0',borderBottom:'1px solid var(--border)'}}><div><span className="mono" style={{fontSize:11,color:'var(--dim)',marginRight:10}}>{a.audit_id}</span><span style={{fontSize:13,fontWeight:500}}>{a.entite}</span></div><div style={{display:'flex',gap:8,alignItems:'center'}}><Tag label={a.statut}/>{op>0&&<Badge color="#F59E0B">{op} ouvert{op>1?"s":""}</Badge>}</div></div>);
-        })}
+        <div style={{marginTop:12}}>
+          <div className="stat-row"><span style={{fontSize:12,color:'var(--muted)'}}>Preuves à valider</span><span className="mono" style={{fontSize:13,fontWeight:700,color:'var(--orange)'}}>{aVal.length}</span></div>
+          <div className="stat-row"><span style={{fontSize:12,color:'var(--muted)'}}>CAPA en cours</span><span className="mono" style={{fontSize:13,fontWeight:700,color:'var(--cyan)'}}>{capa.filter(c=>c.statut==="En cours").length}</span></div>
+          <div className="stat-row"><span style={{fontSize:12,color:'var(--muted)'}}>Audits planifiés</span><span className="mono" style={{fontSize:13,fontWeight:700,color:'var(--accent)'}}>{audits.filter(a=>a.statut==="Planifié").length}</span></div>
+        </div>
       </div>
     </div>
-  </div>);
+
+    {/* === AUDITS ACTIFS === */}
+    <div className="chart-card">
+      <div className="chart-title">Audits actifs <button className="btn-outline btn-sm" onClick={()=>onNav("audits")} style={{marginLeft:'auto'}}>Voir tout →</button></div>
+      {actifs.length===0&&<div style={{color:'var(--dim)',fontSize:13,padding:10}}>Aucun audit actif</div>}
+      {actifs.slice(0,6).map(a=>{const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;const tot=af.length;const pct=tot>0?Math.round(((tot-op)/tot)*100):0;
+        return(<div key={a.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0',borderBottom:'1px solid var(--border)',gap:8,flexWrap:'wrap'}}>
+          <div style={{minWidth:0,flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}><Badge color="#A78BFA">{a.domaine}</Badge><span style={{fontSize:13,fontWeight:600}}>{a.entite}</span></div>
+            <div style={{fontSize:11,color:'var(--dim)',marginTop:3}}><span className="mono">{a.audit_id}</span> • {a.equipe||"—"} • {a.date_debut||"—"}</div>
+          </div>
+          <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
+            <Tag label={a.statut}/>
+            {tot>0&&<div style={{width:60}}><div className="bar-track" style={{height:4}}><div className="bar-fill" style={{width:`${pct}%`,background:'var(--green)',height:4}}/></div><div style={{fontSize:9,color:'var(--dim)',textAlign:'center',marginTop:2}}>{pct}% clôturé</div></div>}
+            {op>0&&<Badge color="#F59E0B">{op} ouvert{op>1?"s":""}</Badge>}
+          </div>
+        </div>)
+      })}
+    </div>
+  </div>)
 }
 
 // ============================================================
-// FORMS
+// FORMS (same as before)
 // ============================================================
-function AuditForm({audit,onClose,onSave}){
-  const [f,setF]=useState(audit||{audit_id:"",domaine:"OPS",entite:"",type_audit:"Interne",date_debut:"",date_fin:"",statut:"Planifié",equipe:"",cycle_surveillance:"",notes:""});
-  return(<Modal onClose={onClose} title={audit?`Modifier ${audit.audit_id}`:"Nouvel Audit"}><div className="form-grid">
-    <Field label="Audit ID *"><input className="input" value={f.audit_id} onChange={e=>setF({...f,audit_id:e.target.value})} placeholder="2026-PEL-003"/></Field>
-    <Field label="Domaine"><Sel value={f.domaine} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field>
-    <Field label="Entité auditée *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})}/></Field>
-    <Field label="Type"><Sel value={f.type_audit} onChange={v=>setF({...f,type_audit:v})} options={TYPES_AUDIT}/></Field>
-    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AUDIT}/></Field>
-    <Field label="Date début"><input type="date" className="input" value={f.date_debut||""} onChange={e=>setF({...f,date_debut:e.target.value})}/></Field>
-    <Field label="Date fin"><input type="date" className="input" value={f.date_fin||""} onChange={e=>setF({...f,date_fin:e.target.value})}/></Field>
-    <Field label="Équipe"><input className="input" value={f.equipe||""} onChange={e=>setF({...f,equipe:e.target.value})}/></Field>
-    <Field label="Cycle surveillance"><input className="input" value={f.cycle_surveillance||""} onChange={e=>setF({...f,cycle_surveillance:e.target.value})} placeholder="Annuel / Semestriel"/></Field>
-    <Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field>
-  </div><button className="btn btn-primary btn-full" style={{marginTop:18}} onClick={()=>onSave(f)}>{audit?"Enregistrer":"Créer l'audit"}</button></Modal>);
-}
+function AuditForm({audit,onClose,onSave}){const[f,setF]=useState(audit||{audit_id:"",domaine:"OPS",entite:"",type_audit:"Interne",date_debut:"",date_fin:"",statut:"Planifié",equipe:"",cycle_surveillance:"",notes:""});return(<Modal onClose={onClose} title={audit?`Modifier ${audit.audit_id}`:"Nouvel Audit"}><div className="form-grid"><Field label="Audit ID *"><input className="input" value={f.audit_id} onChange={e=>setF({...f,audit_id:e.target.value})} placeholder="2026-PEL-003"/></Field><Field label="Domaine"><Sel value={f.domaine} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field><Field label="Entité *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})}/></Field><Field label="Type"><Sel value={f.type_audit} onChange={v=>setF({...f,type_audit:v})} options={TYPES_AUDIT}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AUDIT}/></Field><Field label="Date début"><input type="date" className="input" value={f.date_debut||""} onChange={e=>setF({...f,date_debut:e.target.value})}/></Field><Field label="Date fin"><input type="date" className="input" value={f.date_fin||""} onChange={e=>setF({...f,date_fin:e.target.value})}/></Field><Field label="Équipe"><input className="input" value={f.equipe||""} onChange={e=>setF({...f,equipe:e.target.value})}/></Field><Field label="Cycle"><input className="input" value={f.cycle_surveillance||""} onChange={e=>setF({...f,cycle_surveillance:e.target.value})} placeholder="Annuel"/></Field><Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field></div><button className="btn btn-primary btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{audit?"Enregistrer":"Créer"}</button></Modal>)}
+function FindingForm({finding,audits,onClose,onSave}){const[f,setF]=useState(finding||{finding_id:"",audit_uuid:audits[0]?.id||"",titre:"",constat:"",reference_regl:"",classement:"OBS",criticite:"Mineur",echeance:"",statut:"Ouvert",cause_racine:""});return(<Modal onClose={onClose} title={finding?`Modifier ${finding.finding_id}`:"Nouvel Écart"} width={580}><div className="form-grid"><Field label="Finding ID *"><input className="input" value={f.finding_id} onChange={e=>setF({...f,finding_id:e.target.value})} placeholder="F-2026-PEL-003-01"/></Field><Field label="Audit"><select className="select" value={f.audit_uuid||""} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">— Sélectionner —</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field><Field label="Titre *" span><input className="input" value={f.titre} onChange={e=>setF({...f,titre:e.target.value})}/></Field><Field label="Constat" span><textarea className="textarea" value={f.constat||""} onChange={e=>setF({...f,constat:e.target.value})}/></Field><Field label="Réf. régl."><input className="input" value={f.reference_regl||""} onChange={e=>setF({...f,reference_regl:e.target.value})} placeholder="Part-ORA.GEN.200"/></Field><Field label="Classement"><Sel value={f.classement} onChange={v=>setF({...f,classement:v})} options={CLASSEMENTS}/></Field><Field label="Criticité"><Sel value={f.criticite} onChange={v=>setF({...f,criticite:v})} options={CRITICITES}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_FINDING}/></Field><Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field><Field label="Cause racine"><input className="input" value={f.cause_racine||""} onChange={e=>setF({...f,cause_racine:e.target.value})}/></Field></div><button className="btn btn-orange btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{finding?"Enregistrer":"Créer"}</button></Modal>)}
+function CapaForm({capa,findings,onClose,onSave}){const[f,setF]=useState(capa||{action_id:"",finding_uuid:findings[0]?.id||"",action_corrective:"",action_preventive:"",responsable:"",echeance:"",statut:"Brouillon",avancement:0,cause_racine_detail:"",commentaire_verif:""});return(<Modal onClose={onClose} title={capa?`Modifier ${capa.action_id}`:"Nouvelle CAPA"} width={580}><div className="form-grid"><Field label="Action ID *"><input className="input" value={f.action_id} onChange={e=>setF({...f,action_id:e.target.value})} placeholder="A-2026-PEL-003-01"/></Field><Field label="Finding"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">— Sélectionner —</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field><Field label="Action corrective" span><textarea className="textarea" value={f.action_corrective||""} onChange={e=>setF({...f,action_corrective:e.target.value})}/></Field><Field label="Action préventive" span><textarea className="textarea" value={f.action_preventive||""} onChange={e=>setF({...f,action_preventive:e.target.value})}/></Field><Field label="Responsable"><input className="input" value={f.responsable||""} onChange={e=>setF({...f,responsable:e.target.value})}/></Field><Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_CAPA}/></Field><Field label="% Avancement"><input type="number" className="input" min={0} max={100} value={f.avancement} onChange={e=>setF({...f,avancement:Number(e.target.value)})}/></Field><Field label="Cause racine détail" span><textarea className="textarea" value={f.cause_racine_detail||""} onChange={e=>setF({...f,cause_racine_detail:e.target.value})}/></Field><Field label="Commentaire vérif." span><textarea className="textarea" value={f.commentaire_verif||""} onChange={e=>setF({...f,commentaire_verif:e.target.value})}/></Field></div><button className="btn btn-green btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{capa?"Enregistrer":"Créer"}</button></Modal>)}
+function PreuveForm({preuve,findings,capas,onClose,onSave}){const[f,setF]=useState(preuve||{evidence_id:"",finding_uuid:"",capa_uuid:"",type_preuve:"Autre",fichier_url:"",version:"v1.0",date_preuve:new Date().toISOString().slice(0,10),statut:"Soumise",motif_refus:"",date_expiration:""});return(<Modal onClose={onClose} title={preuve?`Modifier ${preuve.evidence_id}`:"Nouvelle Preuve"} width={520}><div className="form-grid"><Field label="Evidence ID *"><input className="input" value={f.evidence_id} onChange={e=>setF({...f,evidence_id:e.target.value})} placeholder="E-2026-PEL-003-01-01"/></Field><Field label="Type"><Sel value={f.type_preuve} onChange={v=>setF({...f,type_preuve:v})} options={TYPES_PREUVE}/></Field><Field label="Finding"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">— Aucun —</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field><Field label="CAPA"><select className="select" value={f.capa_uuid||""} onChange={e=>setF({...f,capa_uuid:e.target.value})}><option value="">— Aucune —</option>{capas.map(c=><option key={c.id} value={c.id}>{c.action_id}</option>)}</select></Field><Field label="Lien fichier" span><input className="input" value={f.fichier_url||""} onChange={e=>setF({...f,fichier_url:e.target.value})} placeholder="https://drive.google.com/..."/></Field><Field label="Version"><input className="input" value={f.version||""} onChange={e=>setF({...f,version:e.target.value})}/></Field><Field label="Date"><input type="date" className="input" value={f.date_preuve||""} onChange={e=>setF({...f,date_preuve:e.target.value})}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_PREUVE}/></Field><Field label="Expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>{f.statut==="Refusée"&&<Field label="Motif refus" span><textarea className="textarea" value={f.motif_refus||""} onChange={e=>setF({...f,motif_refus:e.target.value})}/></Field>}</div><button className="btn btn-purple btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{preuve?"Enregistrer":"Ajouter"}</button></Modal>)}
 
-function FindingForm({finding,audits,onClose,onSave}){
-  const [f,setF]=useState(finding||{finding_id:"",audit_uuid:audits[0]?.id||"",titre:"",constat:"",reference_regl:"",classement:"OBS",criticite:"Mineur",echeance:"",statut:"Ouvert",cause_racine:""});
-  return(<Modal onClose={onClose} title={finding?`Modifier ${finding.finding_id}`:"Nouvel Écart"} width={580}><div className="form-grid">
-    <Field label="Finding ID *"><input className="input" value={f.finding_id} onChange={e=>setF({...f,finding_id:e.target.value})} placeholder="F-2026-PEL-003-01"/></Field>
-    <Field label="Audit lié"><select className="select" value={f.audit_uuid||""} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">— Sélectionner —</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field>
-    <Field label="Titre *" span><input className="input" value={f.titre} onChange={e=>setF({...f,titre:e.target.value})}/></Field>
-    <Field label="Constat objectif" span><textarea className="textarea" value={f.constat||""} onChange={e=>setF({...f,constat:e.target.value})}/></Field>
-    <Field label="Référence réglementaire"><input className="input" value={f.reference_regl||""} onChange={e=>setF({...f,reference_regl:e.target.value})} placeholder="Part-ORA.GEN.200"/></Field>
-    <Field label="Classement"><Sel value={f.classement} onChange={v=>setF({...f,classement:v})} options={CLASSEMENTS}/></Field>
-    <Field label="Criticité"><Sel value={f.criticite} onChange={v=>setF({...f,criticite:v})} options={CRITICITES}/></Field>
-    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_FINDING}/></Field>
-    <Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field>
-    <Field label="Cause racine"><input className="input" value={f.cause_racine||""} onChange={e=>setF({...f,cause_racine:e.target.value})}/></Field>
-  </div><button className="btn btn-orange btn-full" style={{marginTop:18}} onClick={()=>onSave(f)}>{finding?"Enregistrer":"Créer l'écart"}</button></Modal>);
-}
-
-function CapaForm({capa,findings,onClose,onSave}){
-  const [f,setF]=useState(capa||{action_id:"",finding_uuid:findings[0]?.id||"",action_corrective:"",action_preventive:"",responsable:"",echeance:"",statut:"Brouillon",avancement:0,cause_racine_detail:"",commentaire_verif:""});
-  return(<Modal onClose={onClose} title={capa?`Modifier ${capa.action_id}`:"Nouvelle CAPA"} width={580}><div className="form-grid">
-    <Field label="Action ID *"><input className="input" value={f.action_id} onChange={e=>setF({...f,action_id:e.target.value})} placeholder="A-2026-PEL-003-01"/></Field>
-    <Field label="Finding lié"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">— Sélectionner —</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field>
-    <Field label="Action corrective (court terme)" span><textarea className="textarea" value={f.action_corrective||""} onChange={e=>setF({...f,action_corrective:e.target.value})}/></Field>
-    <Field label="Action préventive (long terme)" span><textarea className="textarea" value={f.action_preventive||""} onChange={e=>setF({...f,action_preventive:e.target.value})}/></Field>
-    <Field label="Responsable"><input className="input" value={f.responsable||""} onChange={e=>setF({...f,responsable:e.target.value})}/></Field>
-    <Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field>
-    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_CAPA}/></Field>
-    <Field label="% Avancement"><input type="number" className="input" min={0} max={100} value={f.avancement} onChange={e=>setF({...f,avancement:Number(e.target.value)})}/></Field>
-    <Field label="Cause racine (détail)" span><textarea className="textarea" value={f.cause_racine_detail||""} onChange={e=>setF({...f,cause_racine_detail:e.target.value})}/></Field>
-    <Field label="Commentaire vérification" span><textarea className="textarea" value={f.commentaire_verif||""} onChange={e=>setF({...f,commentaire_verif:e.target.value})}/></Field>
-  </div><button className="btn btn-green btn-full" style={{marginTop:18}} onClick={()=>onSave(f)}>{capa?"Enregistrer":"Créer l'action"}</button></Modal>);
-}
-
-function PreuveForm({preuve,findings,capas,onClose,onSave}){
-  const [f,setF]=useState(preuve||{evidence_id:"",finding_uuid:"",capa_uuid:"",type_preuve:"Autre",fichier_url:"",version:"v1.0",date_preuve:new Date().toISOString().slice(0,10),statut:"Soumise",motif_refus:"",date_expiration:""});
-  return(<Modal onClose={onClose} title={preuve?`Modifier ${preuve.evidence_id}`:"Nouvelle Preuve"} width={520}><div className="form-grid">
-    <Field label="Evidence ID *"><input className="input" value={f.evidence_id} onChange={e=>setF({...f,evidence_id:e.target.value})} placeholder="E-2026-PEL-003-01-01"/></Field>
-    <Field label="Type"><Sel value={f.type_preuve} onChange={v=>setF({...f,type_preuve:v})} options={TYPES_PREUVE}/></Field>
-    <Field label="Finding lié"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">— Aucun —</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field>
-    <Field label="CAPA liée"><select className="select" value={f.capa_uuid||""} onChange={e=>setF({...f,capa_uuid:e.target.value})}><option value="">— Aucune —</option>{capas.map(c=><option key={c.id} value={c.id}>{c.action_id}</option>)}</select></Field>
-    <Field label="Lien fichier" span><input className="input" value={f.fichier_url||""} onChange={e=>setF({...f,fichier_url:e.target.value})} placeholder="https://drive.google.com/..."/></Field>
-    <Field label="Version"><input className="input" value={f.version||""} onChange={e=>setF({...f,version:e.target.value})}/></Field>
-    <Field label="Date preuve"><input type="date" className="input" value={f.date_preuve||""} onChange={e=>setF({...f,date_preuve:e.target.value})}/></Field>
-    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_PREUVE}/></Field>
-    <Field label="Date expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>
-    {f.statut==="Refusée"&&<Field label="Motif refus" span><textarea className="textarea" value={f.motif_refus||""} onChange={e=>setF({...f,motif_refus:e.target.value})}/></Field>}
-  </div><button className="btn btn-purple btn-full" style={{marginTop:18}} onClick={()=>onSave(f)}>{preuve?"Enregistrer":"Ajouter la preuve"}</button></Modal>);
-}
+// ============================================================
+// MOBILE CARDS
+// ============================================================
+function MC_Audit({a,findings,onClick,onDel}){const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{a.entite}</div><div className="mobile-card-id mono">{a.audit_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#A78BFA">{a.domaine}</Badge><Tag label={a.statut}/><span style={{fontSize:11,color:'var(--muted)'}}>{a.type_audit}</span></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{a.equipe} • {a.date_debut||"—"}</span><div style={{fontSize:12}}><span style={{color:'var(--orange)'}}>{op}</span><span style={{color:'var(--dim)'}}> / {af.length}</span></div></div></div>)}
+function MC_Finding({f,audits,onClick,onDel}){const today=new Date().toISOString().slice(0,10);const au=audits.find(a=>a.id===f.audit_uuid);const ov=f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;return(<div className="mobile-card" onClick={onClick} style={{borderLeft:ov?'3px solid var(--red)':'3px solid transparent'}}><div className="mobile-card-header"><div><div className="mobile-card-title">{f.titre}</div><div className="mobile-card-id mono">{f.finding_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div style={{fontSize:12,color:'var(--dim)',marginBottom:6}}>{au?.entite||"—"} • {f.reference_regl||"—"}</div><div className="mobile-card-meta"><Badge color={XC[f.classement]}>{f.classement}</Badge><Badge color={CC[f.criticite]}>{f.criticite}</Badge><Tag label={f.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:ov?'var(--red)':'var(--dim)'}}>{f.echeance||"—"} {ov?"⚠":""}</span></div></div>)}
+function MC_Capa({c,findings,onClick,onDel}){const fi=findings.find(f=>f.id===c.finding_uuid);return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{c.action_corrective?.slice(0,50)||"—"}</div><div className="mobile-card-id mono">{c.action_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div style={{fontSize:12,color:'var(--dim)',marginBottom:6}}>{fi?.finding_id} — {fi?.titre?.slice(0,40)||"—"}</div><div className="mobile-card-meta"><Tag label={c.statut}/><span style={{fontSize:11,color:'var(--muted)'}}>{c.responsable||"—"}</span></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{c.echeance||"—"}</span><span className="mono" style={{fontSize:13,color:'var(--accent)',fontWeight:700}}>{c.avancement}%</span></div></div>)}
+function MC_Preuve({p,findings,onClick,onDel}){const fi=findings.find(f=>f.id===p.finding_uuid);return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{fi?.titre?.slice(0,40)||"—"}</div><div className="mobile-card-id mono">{p.evidence_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#22D3EE">{p.type_preuve}</Badge><Tag label={p.statut}/><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{p.version}</span></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{p.date_preuve||"—"}</span></div></div>)}
 
 // ============================================================
 // TABLE VIEWS
 // ============================================================
-function AuditsView({api,audits,findings,reload}){
-  const [showForm,setShowForm]=useState(false);const [editing,setEditing]=useState(null);const [filter,setFilter]=useState("Tous");const [search,setSearch]=useState("");const [deleting,setDeleting]=useState(null);
-  const filtered=audits.filter(a=>{if(filter!=="Tous"&&a.statut!==filter)return false;if(search&&!a.entite.toLowerCase().includes(search.toLowerCase())&&!a.audit_id.toLowerCase().includes(search.toLowerCase()))return false;return true;});
-  const handleSave=async(data)=>{try{if(editing)await api.update("audits",editing.id,data);else await api.insert("audits",data);setShowForm(false);setEditing(null);reload();}catch(e){alert("Erreur: "+e.message);}};
-  const handleDelete=async()=>{if(deleting){try{await api.remove("audits",deleting.id);}catch(e){alert("Erreur: "+e.message);}setDeleting(null);reload();}};
-  return(<div>
-    <div className="filters"><input className="input" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Rechercher..." style={{width:240}}/><div className="filter-group">{["Tous",...STATUTS_AUDIT].map(s=>(<button key={s} className={`filter-btn ${filter===s?'active':''}`} onClick={()=>setFilter(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-primary" onClick={()=>{setEditing(null);setShowForm(true);}}>+ Nouvel Audit</button></div>
-    <div className="table-container">{filtered.map(a=>{const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;return(<div key={a.id} className="table-row" style={{gridTemplateColumns:'110px 1fr 80px 90px 100px 70px 40px'}} onClick={()=>{setEditing(a);setShowForm(true);}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{a.audit_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{a.equipe} • {a.date_debut||"—"}</div></div><Badge color="#A78BFA">{a.domaine}</Badge><span style={{fontSize:12,color:'var(--muted)'}}>{a.type_audit}</span><Tag label={a.statut}/><div style={{fontSize:12}}><span style={{color:'var(--orange)'}}>{op}</span><span style={{color:'var(--dim)'}}> / {af.length}</span></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDeleting(a);}}>🗑</button></div>);})}{filtered.length===0&&<Empty text="Aucun audit trouvé"/>}</div>
-    {showForm&&<AuditForm audit={editing} onClose={()=>{setShowForm(false);setEditing(null);}} onSave={handleSave}/>}
-    {deleting&&<ConfirmDelete item={deleting.audit_id} onConfirm={handleDelete} onCancel={()=>setDeleting(null)}/>}
-  </div>);
-}
-
-function FindingsView({api,audits,findings,preuves,reload}){
-  const [showForm,setShowForm]=useState(false);const [editing,setEditing]=useState(null);const [filter,setFilter]=useState("Tous");const [critFilter,setCritFilter]=useState("Tous");const [deleting,setDeleting]=useState(null);const today=new Date().toISOString().slice(0,10);
-  const filtered=findings.filter(f=>{if(filter==="En retard")return f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;if(filter==="Bloquants")return f.criticite==="Bloquant"&&f.statut!=="Clôturé";if(filter==="Prêts à clôturer"){const fp=preuves.filter(p=>p.finding_uuid===f.id&&p.statut==="Acceptée");return f.statut==="Vérification"&&fp.length>=1;}if(filter!=="Tous"&&f.statut!==filter)return false;if(critFilter!=="Tous"&&f.criticite!==critFilter)return false;return true;});
-  const handleSave=async(data)=>{try{if(editing)await api.update("findings",editing.id,data);else await api.insert("findings",data);setShowForm(false);setEditing(null);reload();}catch(e){alert("Erreur: "+e.message);}};
-  const handleDelete=async()=>{if(deleting){try{await api.remove("findings",deleting.id);}catch(e){alert("Erreur: "+e.message);}setDeleting(null);reload();}};
-  return(<div>
-    <div className="filters"><div className="filter-group">{["Tous","Ouvert","En cours","Vérification","Clôturé","En retard","Bloquants","Prêts à clôturer"].map(s=>(<button key={s} className={`filter-btn ${filter===s?'active':''}`} onClick={()=>setFilter(s)}>{s}</button>))}</div><select className="select" style={{width:120,fontSize:11}} value={critFilter} onChange={e=>setCritFilter(e.target.value)}><option value="Tous">Toutes crit.</option>{CRITICITES.map(c=><option key={c} value={c}>{c}</option>)}</select><div className="spacer"/><button className="btn btn-orange" onClick={()=>{setEditing(null);setShowForm(true);}}>+ Nouvel Écart</button></div>
-    <div className="table-container">{filtered.map(f=>{const audit=audits.find(a=>a.id===f.audit_uuid);const isOv=f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;return(<div key={f.id} className="table-row" style={{gridTemplateColumns:'130px 1fr 55px 75px 100px 85px 40px',borderLeft:isOv?'3px solid var(--red)':'3px solid transparent'}} onClick={()=>{setEditing(f);setShowForm(true);}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{f.finding_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{f.titre}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{audit?.entite||"—"} • {f.reference_regl||"—"}</div></div><Badge color={CLASS_COLORS[f.classement]}>{f.classement}</Badge><Badge color={CRIT_COLORS[f.criticite]}>{f.criticite}</Badge><Tag label={f.statut}/><span style={{fontSize:11,color:isOv?'var(--red)':'var(--dim)'}}>{f.echeance||"—"} {isOv?"⚠":""}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDeleting(f);}}>🗑</button></div>);})}{filtered.length===0&&<Empty text="Aucun écart trouvé"/>}</div>
-    {showForm&&<FindingForm finding={editing} audits={audits} onClose={()=>{setShowForm(false);setEditing(null);}} onSave={handleSave}/>}
-    {deleting&&<ConfirmDelete item={deleting.finding_id} onConfirm={handleDelete} onCancel={()=>setDeleting(null)}/>}
-  </div>);
-}
-
-function CapaView({api,findings,capas,reload}){
-  const [showForm,setShowForm]=useState(false);const [editing,setEditing]=useState(null);const [view,setView]=useState("list");const [deleting,setDeleting]=useState(null);
-  const handleSave=async(data)=>{try{if(editing)await api.update("capa",editing.id,data);else await api.insert("capa",data);setShowForm(false);setEditing(null);reload();}catch(e){alert("Erreur: "+e.message);}};
-  const handleDelete=async()=>{if(deleting){try{await api.remove("capa",deleting.id);}catch(e){alert("Erreur: "+e.message);}setDeleting(null);reload();}};
-  const kanbanCols=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace"];
-  return(<div>
-    <div className="filters"><div className="filter-group"><button className={`filter-btn ${view==="list"?'active':''}`} onClick={()=>setView("list")}>Liste</button><button className={`filter-btn ${view==="kanban"?'active':''}`} onClick={()=>setView("kanban")}>Kanban</button></div><div className="spacer"/><button className="btn btn-green" onClick={()=>{setEditing(null);setShowForm(true);}}>+ Nouvelle Action</button></div>
-    {view==="kanban"?(<div className="kanban">{kanbanCols.map(col=>(<div key={col} className="kanban-col"><div className="kanban-title" style={{color:STATUS_COLORS[col]||'var(--muted)'}}>{col} <span style={{color:'var(--dim)'}}>({capas.filter(c=>c.statut===col).length})</span></div>{capas.filter(c=>c.statut===col).map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="kanban-card" onClick={()=>{setEditing(c);setShowForm(true);}}><div className="mono" style={{fontSize:10,color:'var(--dim)'}}>{c.action_id}</div><div style={{fontSize:12,fontWeight:500,marginTop:4}}>{fi?.titre||"—"}</div><div style={{marginTop:8,display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{fontSize:11,color:'var(--muted)'}}>{c.responsable||"—"}</span><span className="mono" style={{fontSize:11,color:'var(--accent)',fontWeight:700}}>{c.avancement}%</span></div></div>);})}</div>))}</div>):(
-    <div className="table-container">{capas.map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="table-row" style={{gridTemplateColumns:'120px 1fr 100px 100px 60px 40px'}} onClick={()=>{setEditing(c);setShowForm(true);}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{c.action_id}</span><div><div style={{fontSize:13,fontWeight:500}}>{c.action_corrective?.slice(0,60)||"—"}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{fi?.finding_id} — {fi?.titre?.slice(0,40)||"—"}</div></div><span style={{fontSize:12,color:'var(--muted)'}}>{c.responsable||"—"}</span><Tag label={c.statut}/><span className="mono" style={{fontSize:12,color:'var(--accent)'}}>{c.avancement}%</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDeleting(c);}}>🗑</button></div>);})}{capas.length===0&&<Empty text="Aucune action corrective"/>}</div>)}
-    {showForm&&<CapaForm capa={editing} findings={findings} onClose={()=>{setShowForm(false);setEditing(null);}} onSave={handleSave}/>}
-    {deleting&&<ConfirmDelete item={deleting.action_id} onConfirm={handleDelete} onCancel={()=>setDeleting(null)}/>}
-  </div>);
-}
-
-function PreuvesView({api,findings,capas,preuves,reload}){
-  const [showForm,setShowForm]=useState(false);const [editing,setEditing]=useState(null);const [filter,setFilter]=useState("Tous");const [deleting,setDeleting]=useState(null);
-  const filtered=preuves.filter(p=>filter==="Tous"||p.statut===filter);
-  const handleSave=async(data)=>{try{if(editing)await api.update("preuves",editing.id,data);else await api.insert("preuves",data);setShowForm(false);setEditing(null);reload();}catch(e){alert("Erreur: "+e.message);}};
-  const handleDelete=async()=>{if(deleting){try{await api.remove("preuves",deleting.id);}catch(e){alert("Erreur: "+e.message);}setDeleting(null);reload();}};
-  return(<div>
-    <div className="filters"><div className="filter-group">{["Tous",...STATUTS_PREUVE].map(s=>(<button key={s} className={`filter-btn ${filter===s?'active':''}`} onClick={()=>setFilter(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-purple" onClick={()=>{setEditing(null);setShowForm(true);}}>+ Nouvelle Preuve</button></div>
-    <div className="table-container">{filtered.map(p=>{const fi=findings.find(f=>f.id===p.finding_uuid);const ca=capas.find(c=>c.id===p.capa_uuid);return(<div key={p.id} className="table-row" style={{gridTemplateColumns:'140px 1fr 100px 70px 80px 80px 40px'}} onClick={()=>{setEditing(p);setShowForm(true);}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{p.evidence_id}</span><div><div style={{fontSize:12}}>{fi?.finding_id||"—"} {ca?`/ ${ca.action_id}`:""}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{fi?.titre?.slice(0,50)||"—"}</div></div><Badge color="#22D3EE">{p.type_preuve}</Badge><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{p.version}</span><Tag label={p.statut}/><span style={{fontSize:11,color:'var(--dim)'}}>{p.date_preuve||"—"}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDeleting(p);}}>🗑</button></div>);})}{filtered.length===0&&<Empty text="Aucune preuve enregistrée"/>}</div>
-    {showForm&&<PreuveForm preuve={editing} findings={findings} capas={capas} onClose={()=>{setShowForm(false);setEditing(null);}} onSave={handleSave}/>}
-    {deleting&&<ConfirmDelete item={deleting.evidence_id} onConfirm={handleDelete} onCancel={()=>setDeleting(null)}/>}
-  </div>);
-}
+function AuditsView({api,audits,findings,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[se,setSe]=useState("");const[del,setDel]=useState(null);const fl=audits.filter(a=>{if(fil!=="Tous"&&a.statut!==fil)return false;if(se&&!a.entite.toLowerCase().includes(se.toLowerCase())&&!a.audit_id.toLowerCase().includes(se.toLowerCase()))return false;return true});const save=async(d)=>{try{if(ed)await api.update("audits",ed.id,d);else await api.insert("audits",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("audits",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><input className="input" value={se} onChange={e=>setSe(e.target.value)} placeholder="Rechercher..." style={{width:240,maxWidth:'100%'}}/><div className="filter-group">{["Tous",...STATUTS_AUDIT].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-primary" onClick={()=>{setEd(null);setSf(true)}}>+ Nouvel Audit</button></div><div className="table-container desktop-only">{fl.map(a=>{const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;return(<div key={a.id} className="table-row" style={{gridTemplateColumns:'110px 1fr 80px 90px 100px 70px 40px'}} onClick={()=>{setEd(a);setSf(true)}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{a.audit_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{a.equipe} • {a.date_debut||"—"}</div></div><Badge color="#A78BFA">{a.domaine}</Badge><span style={{fontSize:12,color:'var(--muted)'}}>{a.type_audit}</span><Tag label={a.statut}/><div style={{fontSize:12}}><span style={{color:'var(--orange)'}}>{op}</span><span style={{color:'var(--dim)'}}> / {af.length}</span></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucun audit"/>}</div><div className="mobile-only">{fl.map(a=><MC_Audit key={a.id} a={a} findings={findings} onClick={()=>{setEd(a);setSf(true)}} onDel={()=>setDel(a)}/>)}{fl.length===0&&<Empty text="Aucun audit"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--accent)"/>{sf&&<AuditForm audit={ed} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.audit_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
+function FindingsView({api,audits,findings,preuves,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[cf,setCf]=useState("Tous");const[del,setDel]=useState(null);const today=new Date().toISOString().slice(0,10);const fl=findings.filter(f=>{if(fil==="Retard")return f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;if(fil==="Bloq.")return f.criticite==="Bloquant"&&f.statut!=="Clôturé";if(fil==="Prêts")return f.statut==="Vérification"&&preuves.filter(p=>p.finding_uuid===f.id&&p.statut==="Acceptée").length>=1;if(fil!=="Tous"&&f.statut!==fil)return false;if(cf!=="Tous"&&f.criticite!==cf)return false;return true});const save=async(d)=>{try{if(ed)await api.update("findings",ed.id,d);else await api.insert("findings",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("findings",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><div className="filter-group">{["Tous","Ouvert","En cours","Vérification","Clôturé","Retard","Bloq.","Prêts"].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><select className="select" style={{width:110,fontSize:11}} value={cf} onChange={e=>setCf(e.target.value)}><option value="Tous">Toutes crit.</option>{CRITICITES.map(c=><option key={c} value={c}>{c}</option>)}</select><div className="spacer"/><button className="btn btn-orange" onClick={()=>{setEd(null);setSf(true)}}>+ Écart</button></div><div className="table-container desktop-only">{fl.map(f=>{const au=audits.find(a=>a.id===f.audit_uuid);const ov=f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;return(<div key={f.id} className="table-row" style={{gridTemplateColumns:'130px 1fr 55px 75px 100px 85px 40px',borderLeft:ov?'3px solid var(--red)':'3px solid transparent'}} onClick={()=>{setEd(f);setSf(true)}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{f.finding_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{f.titre}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{au?.entite||"—"} • {f.reference_regl||"—"}</div></div><Badge color={XC[f.classement]}>{f.classement}</Badge><Badge color={CC[f.criticite]}>{f.criticite}</Badge><Tag label={f.statut}/><span style={{fontSize:11,color:ov?'var(--red)':'var(--dim)'}}>{f.echeance||"—"} {ov?"⚠":""}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(f)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucun écart"/>}</div><div className="mobile-only">{fl.map(f=><MC_Finding key={f.id} f={f} audits={audits} onClick={()=>{setEd(f);setSf(true)}} onDel={()=>setDel(f)}/>)}{fl.length===0&&<Empty text="Aucun écart"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--orange)"/>{sf&&<FindingForm finding={ed} audits={audits} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.finding_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
+function CapaView({api,findings,capas,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[vw,setVw]=useState("list");const[del,setDel]=useState(null);const save=async(d)=>{try{if(ed)await api.update("capa",ed.id,d);else await api.insert("capa",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("capa",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};const kc=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace"];return(<div><div className="filters"><div className="filter-group"><button className={`filter-btn ${vw==="list"?'active':''}`} onClick={()=>setVw("list")}>Liste</button><button className={`filter-btn ${vw==="kanban"?'active':''}`} onClick={()=>setVw("kanban")}>Kanban</button></div><div className="spacer"/><button className="btn btn-green" onClick={()=>{setEd(null);setSf(true)}}>+ Action</button></div>{vw==="kanban"?(<div className="kanban">{kc.map(col=>(<div key={col} className="kanban-col"><div className="kanban-title" style={{color:SC[col]||'var(--muted)'}}>{col} ({capas.filter(c=>c.statut===col).length})</div>{capas.filter(c=>c.statut===col).map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="kanban-card" onClick={()=>{setEd(c);setSf(true)}}><div className="mono" style={{fontSize:10,color:'var(--dim)'}}>{c.action_id}</div><div style={{fontSize:12,fontWeight:500,marginTop:4}}>{fi?.titre||"—"}</div><div style={{marginTop:8,display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{fontSize:11,color:'var(--muted)'}}>{c.responsable||"—"}</span><span className="mono" style={{fontSize:11,color:'var(--accent)',fontWeight:700}}>{c.avancement}%</span></div></div>)})}</div>))}</div>):(<React.Fragment><div className="table-container desktop-only">{capas.map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="table-row" style={{gridTemplateColumns:'120px 1fr 100px 100px 60px 40px'}} onClick={()=>{setEd(c);setSf(true)}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{c.action_id}</span><div><div style={{fontSize:13,fontWeight:500}}>{c.action_corrective?.slice(0,60)||"—"}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{fi?.finding_id} — {fi?.titre?.slice(0,40)||"—"}</div></div><span style={{fontSize:12,color:'var(--muted)'}}>{c.responsable||"—"}</span><Tag label={c.statut}/><span className="mono" style={{fontSize:12,color:'var(--accent)'}}>{c.avancement}%</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(c)}}>🗑</button></div>)})}{capas.length===0&&<Empty text="Aucune action"/>}</div><div className="mobile-only">{capas.map(c=><MC_Capa key={c.id} c={c} findings={findings} onClick={()=>{setEd(c);setSf(true)}} onDel={()=>setDel(c)}/>)}{capas.length===0&&<Empty text="Aucune action"/>}</div></React.Fragment>)}<FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--green)"/>{sf&&<CapaForm capa={ed} findings={findings} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.action_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
+function PreuvesView({api,findings,capas,preuves,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[del,setDel]=useState(null);const fl=preuves.filter(p=>fil==="Tous"||p.statut===fil);const save=async(d)=>{try{if(ed)await api.update("preuves",ed.id,d);else await api.insert("preuves",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("preuves",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><div className="filter-group">{["Tous",...STATUTS_PREUVE].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-purple" onClick={()=>{setEd(null);setSf(true)}}>+ Preuve</button></div><div className="table-container desktop-only">{fl.map(p=>{const fi=findings.find(f=>f.id===p.finding_uuid);const ca=capas.find(c=>c.id===p.capa_uuid);return(<div key={p.id} className="table-row" style={{gridTemplateColumns:'140px 1fr 100px 70px 80px 80px 40px'}} onClick={()=>{setEd(p);setSf(true)}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{p.evidence_id}</span><div><div style={{fontSize:12}}>{fi?.finding_id||"—"} {ca?`/ ${ca.action_id}`:""}</div><div style={{fontSize:11,color:'var(--dim)',marginTop:1}}>{fi?.titre?.slice(0,50)||"—"}</div></div><Badge color="#22D3EE">{p.type_preuve}</Badge><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{p.version}</span><Tag label={p.statut}/><span style={{fontSize:11,color:'var(--dim)'}}>{p.date_preuve||"—"}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(p)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucune preuve"/>}</div><div className="mobile-only">{fl.map(p=><MC_Preuve key={p.id} p={p} findings={findings} onClick={()=>{setEd(p);setSf(true)}} onDel={()=>setDel(p)}/>)}{fl.length===0&&<Empty text="Aucune preuve"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--purple)"/>{sf&&<PreuveForm preuve={ed} findings={findings} capas={capas} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.evidence_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
 
 // ============================================================
 // MAIN APP
 // ============================================================
 function App(){
-  const [user,setUser]=useState(null);
-  const [token,setToken]=useState(null);
-  const [api,setApi]=useState(null);
-  const [tab,setTab]=useState("dashboard");
-  const [audits,setAudits]=useState([]);
-  const [findings,setFindings]=useState([]);
-  const [capas,setCapas]=useState([]);
-  const [preuves,setPreuves]=useState([]);
-  const [loading,setLoading]=useState(false);
-  const [error,setError]=useState("");
-  const [checkingSession,setCheckingSession]=useState(true);
-
-  const loadAll=useCallback(async(apiRef)=>{
-    const a=apiRef||api;if(!a)return;
-    setLoading(true);setError("");
-    try{
-      const [au,fi,ca,pr]=await Promise.all([a.select("audits","order=created_at.desc"),a.select("findings","order=created_at.desc"),a.select("capa","order=created_at.desc"),a.select("preuves","order=created_at.desc")]);
-      setAudits(au);setFindings(fi);setCapas(ca);setPreuves(pr);
-    }catch(e){setError("Erreur: "+e.message);}
-    setLoading(false);
-  },[api]);
-
-  const handleLogin=(accessToken,userData)=>{
-    const a=createApi(accessToken);
-    setToken(accessToken);setUser(userData);setApi(a);loadAll(a);
-  };
-
-  const handleLogout=async()=>{
-    try{if(token)await authApi.logout(token);}catch(e){}
-    localStorage.removeItem("sb_token");localStorage.removeItem("sb_refresh");localStorage.removeItem("sb_user_email");
-    setUser(null);setToken(null);setApi(null);setAudits([]);setFindings([]);setCapas([]);setPreuves([]);
-  };
-
-  // Auto-login from stored token
-  useEffect(()=>{
-    const storedToken=localStorage.getItem("sb_token");
-    if(storedToken){
-      authApi.getUser(storedToken).then(userData=>{
-        const a=createApi(storedToken);
-        setToken(storedToken);setUser(userData);setApi(a);loadAll(a);
-        setCheckingSession(false);
-      }).catch(()=>{
-        localStorage.removeItem("sb_token");localStorage.removeItem("sb_refresh");
-        setCheckingSession(false);
-      });
-    } else { setCheckingSession(false); }
-  },[]);
-
-  if(checkingSession) return(<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)'}}><div style={{textAlign:'center'}}><div style={{fontSize:48,marginBottom:12}}>✈️</div><div style={{color:'var(--muted)',fontSize:14}}>Chargement...</div></div></div>);
-
-  if(!user) return <LoginScreen onLogin={handleLogin}/>;
-
-  const tabs=[
-    {id:"dashboard",label:"Tableau de bord",icon:"📊"},
-    {id:"audits",label:"Audits",icon:"📋",count:audits.length},
-    {id:"findings",label:"Écarts",icon:"⚠️",count:findings.filter(f=>f.statut!=="Clôturé").length},
-    {id:"capa",label:"CAPA",icon:"🔧",count:capas.length},
-    {id:"preuves",label:"Preuves",icon:"📎",count:preuves.filter(p=>p.statut==="Soumise").length},
-  ];
-
+  const[user,setUser]=useState(null);const[token,setToken]=useState(null);const[api,setApi]=useState(null);const[tab,setTab]=useState("dashboard");const[audits,setAudits]=useState([]);const[findings,setFindings]=useState([]);const[capas,setCapas]=useState([]);const[preuves,setPreuves]=useState([]);const[loading,setLoading]=useState(false);const[error,setError]=useState("");const[cs,setCs]=useState(true);
+  const loadAll=useCallback(async(ar)=>{const a=ar||api;if(!a)return;setLoading(true);setError("");try{const[au,fi,ca,pr]=await Promise.all([a.select("audits","order=created_at.desc"),a.select("findings","order=created_at.desc"),a.select("capa","order=created_at.desc"),a.select("preuves","order=created_at.desc")]);setAudits(au);setFindings(fi);setCapas(ca);setPreuves(pr)}catch(e){setError("Erreur: "+e.message)}setLoading(false)},[api]);
+  const handleLogin=(t,u)=>{const a=createApi(t);setToken(t);setUser(u);setApi(a);loadAll(a)};
+  const handleLogout=async()=>{try{if(token)await authApi.logout(token)}catch(e){}localStorage.removeItem("sb_token");localStorage.removeItem("sb_user_email");setUser(null);setToken(null);setApi(null);setAudits([]);setFindings([]);setCapas([]);setPreuves([])};
+  useEffect(()=>{const t=localStorage.getItem("sb_token");if(t){authApi.getUser(t).then(u=>{const a=createApi(t);setToken(t);setUser(u);setApi(a);loadAll(a);setCs(false)}).catch(()=>{localStorage.removeItem("sb_token");setCs(false)})}else setCs(false)},[]);
+  if(cs)return(<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)'}}><div style={{textAlign:'center'}}><div style={{fontSize:48,marginBottom:12}}>✈️</div><div style={{color:'var(--muted)',fontSize:14}}>Chargement...</div></div></div>);
+  if(!user)return <LoginScreen onLogin={handleLogin}/>;
+  const tabs=[{id:"dashboard",label:"Tableau de bord",icon:"📊",ml:"Accueil"},{id:"audits",label:"Audits",icon:"📋",ml:"Audits",count:audits.length},{id:"findings",label:"Écarts",icon:"⚠️",ml:"Écarts",count:findings.filter(f=>f.statut!=="Clôturé").length},{id:"capa",label:"CAPA",icon:"🔧",ml:"CAPA",count:capas.length},{id:"preuves",label:"Preuves",icon:"📎",ml:"Preuves",count:preuves.filter(p=>p.statut==="Soumise").length}];
   return(<div>
-    <header className="header">
-      <div className="header-left">
-        <div className="logo">✈</div>
-        <div><div className="header-title">DGAC — Suivi des Audits</div><div className="header-sub">Direction Générale de l'Aviation Civile</div></div>
-      </div>
-      <div className="tabs">
-        {tabs.map(t=>(<button key={t.id} className={`tab-btn ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}><span>{t.icon}</span> {t.label}{t.count!==undefined&&t.count>0&&<span className="tab-count">{t.count}</span>}</button>))}
-      </div>
-      <div style={{display:'flex',gap:8,alignItems:'center'}}>
-        <div className="user-badge"><div className="user-dot"/>{user.email}</div>
-        <button className="btn-outline btn-sm" onClick={()=>loadAll()}>{loading?"⏳":"🔄"}</button>
-        <button className="btn-outline btn-outline-red btn-sm" onClick={handleLogout}>Déconnexion</button>
-      </div>
-    </header>
-    {error&&<div className="error-box" style={{margin:'16px 28px 0'}}>{error}</div>}
-    <main style={{padding:'24px 28px',maxWidth:1320,margin:'0 auto'}}>
-      {tab==="dashboard"&&<Dashboard audits={audits} findings={findings} capa={capas} preuves={preuves} onNav={setTab}/>}
-      {tab==="audits"&&<AuditsView api={api} audits={audits} findings={findings} reload={()=>loadAll()}/>}
-      {tab==="findings"&&<FindingsView api={api} audits={audits} findings={findings} preuves={preuves} reload={()=>loadAll()}/>}
-      {tab==="capa"&&<CapaView api={api} findings={findings} capas={capas} reload={()=>loadAll()}/>}
-      {tab==="preuves"&&<PreuvesView api={api} findings={findings} capas={capas} preuves={preuves} reload={()=>loadAll()}/>}
-    </main>
-  </div>);
+    <header className="header"><div className="header-left"><div className="logo">✈</div><div><div className="header-title">DGAC — Suivi des Audits</div><div className="header-sub">Direction Générale de l'Aviation Civile</div></div></div><div className="desktop-tabs">{tabs.map(t=>(<button key={t.id} className={`tab-btn ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}><span>{t.icon}</span> {t.label}{t.count!==undefined&&t.count>0&&<span className="tab-count">{t.count}</span>}</button>))}</div><div className="header-right"><div className="user-badge"><div className="user-dot"/>{user.email}</div><button className="btn-outline btn-sm" onClick={()=>loadAll()}>{loading?"⏳":"🔄"}</button><button className="btn-outline btn-outline-red btn-sm" onClick={handleLogout}>Déconnexion</button></div></header>
+    <nav className="mobile-nav">{tabs.map(t=>(<button key={t.id} className={`mobile-nav-btn ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}><span className="nav-icon">{t.icon}</span>{t.ml}{t.count>0&&tab!==t.id&&<span className="nav-badge">{t.count}</span>}</button>))}<button className="mobile-nav-btn" onClick={handleLogout}><span className="nav-icon">🚪</span>Sortir</button></nav>
+    {error&&<div className="error-box" style={{margin:'12px 16px 0'}}>{error}</div>}
+    <main style={{padding:'24px 28px',maxWidth:1320,margin:'0 auto'}}>{tab==="dashboard"&&<Dashboard audits={audits} findings={findings} capa={capas} preuves={preuves} onNav={setTab}/>}{tab==="audits"&&<AuditsView api={api} audits={audits} findings={findings} reload={()=>loadAll()}/>}{tab==="findings"&&<FindingsView api={api} audits={audits} findings={findings} preuves={preuves} reload={()=>loadAll()}/>}{tab==="capa"&&<CapaView api={api} findings={findings} capas={capas} reload={()=>loadAll()}/>}{tab==="preuves"&&<PreuvesView api={api} findings={findings} capas={capas} preuves={preuves} reload={()=>loadAll()}/>}</main>
+  </div>)
 }
-
 ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
 </script>
 </body>
