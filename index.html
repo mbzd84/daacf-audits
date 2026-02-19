@@ -85,7 +85,7 @@
   .user-badge{display:flex;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted)}
   .user-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
   /* Chart specific */
-  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;overflow:hidden}
   .chart-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
   .chart-center{display:flex;justify-content:center;align-items:center}
   .donut-legend{margin-top:14px}
@@ -97,7 +97,7 @@
   .pipeline-bar:hover{opacity:0.8}
   .pipeline-label{font-size:9px;color:var(--muted);text-align:center;margin-top:6px;font-weight:600;line-height:1.2}
   .pipeline-count{font-size:13px;font-weight:700;text-align:center;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
-  .progress-ring{transform:rotate(-90deg)}
+  .progress-ring{transform:rotate(-90deg);transform-origin:center}
   .section-title{font-size:16px;font-weight:700;margin-bottom:16px;margin-top:28px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
   .section-title:first-child{margin-top:0}
   .stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
@@ -154,13 +154,13 @@ function FAB({onClick,color}){return(<button className="btn-fab" style={{backgro
 // ============================================================
 // CHART COMPONENTS
 // ============================================================
-function DonutChart({data,size=140,thickness=22,centerLabel,centerValue}){
+function DonutChart({data,size=120,thickness=18,centerLabel,centerValue}){
   const total=data.reduce((s,d)=>s+d.value,0);if(total===0)return(<div className="chart-center" style={{height:size}}><span style={{color:'var(--dim)',fontSize:13}}>Aucune donnée</span></div>);
   const r=(size-thickness)/2;const cx=size/2;const cy=size/2;const circ=2*Math.PI*r;
   let offset=0;
   return(
     <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-      <svg width={size} height={size} style={{overflow:'visible'}}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{overflow:'hidden',display:'block',margin:'0 auto'}}>
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth={thickness}/>
         {data.filter(d=>d.value>0).map((d,i)=>{
           const pct=d.value/total;const len=pct*circ;const gap=data.filter(x=>x.value>0).length>1?2:0;
