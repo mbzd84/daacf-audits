@@ -3,397 +3,711 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DGAC — Plateforme de Surveillance</title>
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="manifest" href="manifest.json">
+<title>DGAC — Suivi des Audits</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DGAC">
-<meta name="theme-color" content="#080C18">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0B1528">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  :root{--bg:#080C18;--card:#0E1326;--card-hover:#121836;--border:rgba(255,255,255,0.06);--border-light:rgba(255,255,255,0.1);--text:#E2E8F0;--muted:rgba(255,255,255,0.4);--dim:rgba(255,255,255,0.25);--accent:#3B82F6;--accent-dark:#1D4ED8;--red:#EF4444;--orange:#F59E0B;--green:#10B981;--purple:#A78BFA;--cyan:#22D3EE;--teal:#14B8A6;--pink:#EC4899;--safe-bottom:env(safe-area-inset-bottom,0px)}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-  .mono{font-family:'JetBrains Mono',monospace}
-  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
-  .header{padding:14px 28px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:rgba(8,12,24,0.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
-  .header-left{display:flex;align-items:center;gap:12px}
-  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-  .header-title{font-size:15px;font-weight:700;letter-spacing:-0.3px}
-  .header-sub{font-size:10px;color:var(--dim);letter-spacing:0.5px}
-  .header-right{display:flex;gap:8px;align-items:center}
-  .desktop-tabs{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,0.03);border-radius:10px;padding:3px;flex-wrap:wrap}
-  .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(8,12,24,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:4px 2px;padding-bottom:calc(4px + var(--safe-bottom));z-index:100;justify-content:space-around}
-  .mobile-nav-btn{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--muted);font-size:9px;font-family:inherit;font-weight:600;cursor:pointer;padding:4px 3px;border-radius:8px;min-width:42px;position:relative}
-  .mobile-nav-btn.active{color:var(--accent)}
-  .mobile-nav-btn .nav-icon{font-size:18px}
-  .mobile-nav-btn .nav-badge{position:absolute;top:0;right:0;font-size:8px;font-weight:700;background:var(--red);color:#fff;padding:1px 4px;border-radius:8px;font-family:'JetBrains Mono',monospace}
-  .tab-btn{padding:6px 12px;border-radius:7px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;background:transparent;color:var(--muted);transition:all 0.15s;white-space:nowrap}
-  .tab-btn.active{background:rgba(59,130,246,0.2);color:var(--accent)}
-  .tab-count{font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:8px;background:rgba(255,255,255,0.06)}
-  .tab-btn.active .tab-count{background:rgba(59,130,246,0.3);color:var(--accent)}
-  .btn{padding:8px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity 0.15s}
-  .btn:hover{opacity:0.85}.btn:disabled{opacity:0.5;cursor:not-allowed}.btn:active{transform:scale(0.97)}
-  .btn-primary{background:var(--accent);color:#fff}.btn-orange{background:var(--orange);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-purple{background:var(--purple);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-teal{background:var(--teal);color:#fff}.btn-pink{background:var(--pink);color:#fff}
-  .btn-outline{padding:7px 14px;background:transparent;border:1px solid rgba(59,130,246,0.3);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--accent)}
-  .btn-outline-red{border-color:rgba(239,68,68,0.3);color:var(--red)}
-  .btn-sm{padding:5px 12px;font-size:11px}.btn-full{width:100%;padding:12px 0}
-  .btn-icon{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:8px}
-  .btn-fab{position:fixed;bottom:76px;right:16px;width:50px;height:50px;border-radius:50%;border:none;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.4);z-index:90;display:none;align-items:center;justify-content:center;color:#fff}
-  .input,.select,.textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border-light);border-radius:8px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
-  .input:focus,.select:focus,.textarea:focus{border-color:var(--accent)}.select{cursor:pointer}.textarea{min-height:70px;resize:vertical}
-  .label{font-size:11px;color:var(--muted);margin-bottom:4px;display:block;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px}.card-padded{padding:20px}
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
-  .kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden}
-  .kpi-bar{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:14px 0 0 14px}
-  .kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:600}
-  .kpi-value{font-size:26px;font-weight:700;margin-top:3px}.kpi-sub{font-size:11px;color:var(--dim);margin-top:2px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap}
-  .table-container{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-  .table-row{display:grid;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background 0.1s}
-  .table-row:hover{background:var(--card-hover)}
-  .mobile-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer}
-  .mobile-card:active{border-color:rgba(59,130,246,0.3)}
-  .mobile-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-  .mobile-card-title{font-size:14px;font-weight:600}.mobile-card-id{font-size:11px;color:var(--dim);margin-top:2px}
-  .mobile-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-  .mobile-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:10px}
-  .modal{background:#111827;border:1px solid var(--border-light);border-radius:16px;padding:24px;max-width:94vw;max-height:90vh;overflow-y:auto;width:540px}
-  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-  .modal-title{font-size:18px;font-weight:700}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-span{grid-column:1/-1}
-  .filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
-  .filter-group{display:flex;gap:3px;background:rgba(255,255,255,0.03);border-radius:8px;padding:3px;flex-wrap:wrap}
-  .filter-btn{padding:6px 12px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);white-space:nowrap}
-  .filter-btn.active{background:rgba(59,130,246,0.2);color:var(--accent)}.spacer{flex:1}
-  .alert{padding:16px 18px;border-radius:12px;margin-bottom:20px}
-  .alert-red{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15)}
-  .alert-orange{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15)}
-  .alert-title{font-size:14px;font-weight:700;margin-bottom:10px}
-  .empty{padding:40px 20px;text-align:center;color:var(--dim);font-size:14px}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.grid-span{grid-column:1/-1}
-  .bar-track{height:6px;background:rgba(255,255,255,0.04);border-radius:3px}.bar-fill{height:100%;border-radius:3px;transition:width 0.4s}
-  .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
-  .kanban-col{min-width:170px;flex:1}.kanban-title{font-size:12px;font-weight:700;margin-bottom:10px;padding:0 4px}
-  .kanban-card{padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer}
-  .kanban-card:active{border-color:rgba(59,130,246,0.3)}
-  .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-box{width:420px;max-width:100%}.login-header{text-align:center;margin-bottom:32px}
-  .login-icon{font-size:48px;margin-bottom:14px}.login-title{font-size:22px;font-weight:700}
-  .login-sub{color:var(--muted);font-size:14px;margin-top:6px}
-  .error-box{padding:10px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:var(--red);font-size:12px;margin-bottom:14px}
-  .user-badge{display:flex;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted)}
-  .user-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
-  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;overflow:hidden}
-  .chart-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-  .donut-legend{margin-top:14px}.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
-  .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-  .legend-val{margin-left:auto;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px}
-  .pipeline{display:flex;gap:2px;align-items:flex-end;height:100px;padding-top:10px}
-  .pipeline-label{font-size:9px;color:var(--muted);text-align:center;margin-top:6px;font-weight:600;line-height:1.2}
-  .pipeline-count{font-size:13px;font-weight:700;text-align:center;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
-  .pipeline-bar{flex:1;border-radius:6px 6px 0 0;transition:height 0.5s;min-width:20px}
-  .section-title{font-size:16px;font-weight:700;margin-bottom:16px;margin-top:28px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-  .section-title:first-child{margin-top:0}
-  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}.stat-row:last-child{border:none}
-  .progress-ring{transform:rotate(-90deg);transform-origin:center}
-  .renouv-list{margin-top:14px}.renouv-item{padding:10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px}
-  .expiry-warn{animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
-  @media(max-width:768px){
-    .header{padding:10px 14px}.header-title{font-size:13px}.header-sub{display:none}
-    .desktop-tabs{display:none!important}.header-right .user-badge{display:none}.header-right .btn-outline:not(.btn-outline-red){display:none}
-    .mobile-nav{display:flex!important}.btn-fab{display:flex!important}
-    main{padding:14px 12px 90px 12px!important}
-    .filters{gap:6px}.filter-group{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
-    .filter-btn{padding:5px 9px;font-size:10px;flex-shrink:0}
-    .form-grid{grid-template-columns:1fr}.form-span{grid-column:1}
-    .grid-2,.grid-3{grid-template-columns:1fr}.grid-span{grid-column:1}
-    .modal{padding:20px 16px;width:100%;max-width:100%;border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:92vh}
-    .modal-overlay{align-items:flex-end;padding:0}
-    .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:12px 14px}.kpi-value{font-size:22px}.kpi-label{font-size:8px}
-    .desktop-only{display:none!important}.mobile-only{display:block!important}
-    .input,.select,.textarea{font-size:16px;padding:12px}.btn{padding:10px 18px;font-size:14px}.btn-full{padding:14px 0}
-    .filters .btn{display:none}.alert{padding:12px 14px}.chart-card{padding:16px}
-  }
-  @media(min-width:769px){.mobile-only{display:none!important}.mobile-nav{display:none!important}.btn-fab{display:none!important}}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0B1528;--card:#12203D;--card-hover:#162847;--border:rgba(189,165,107,0.08);--border-light:rgba(189,165,107,0.15);--text:#E8E4DD;--muted:rgba(232,228,221,0.5);--dim:rgba(232,228,221,0.3);--gold:#BDA56B;--gold-light:#D4C088;--gold-dark:#96833F;--red-tn:#C8102E;--green:#2ECC71;--orange:#F39C12;--cyan:#5DADE2;--purple:#9B59B6;--safe-bottom:env(safe-area-inset-bottom,0px);--tr:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;min-height:100vh;overflow-x:hidden;line-height:1.6}
+h1,h2,h3,.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+::selection{background:rgba(189,165,107,0.3)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(189,165,107,0.2);border-radius:4px}
+.tn-stripe{height:3px;background:linear-gradient(90deg,var(--red-tn),var(--gold),var(--red-tn));opacity:0.6}
+.header{padding:0 28px;height:62px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:rgba(11,21,40,0.97);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px rgba(189,165,107,0.2);font-size:16px}
+.header-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold-light)}
+.header-sub{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.desktop-tabs{display:flex;gap:1px;padding:3px;border-radius:10px;background:rgba(189,165,107,0.04);border:1px solid var(--border);flex-wrap:wrap}
+.tab-btn{padding:7px 12px;border-radius:7px;border:none;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;background:transparent;color:var(--muted);transition:var(--tr);white-space:nowrap;letter-spacing:0.3px;text-transform:uppercase}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{background:rgba(189,165,107,0.12);color:var(--gold)}
+.tab-count{font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 5px;border-radius:6px;background:rgba(189,165,107,0.15);color:var(--gold)}
+.tab-alert{font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 5px;border-radius:6px;background:rgba(200,16,46,0.2);color:var(--red-tn)}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(11,21,40,0.98);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:4px 2px;padding-bottom:calc(4px + var(--safe-bottom));z-index:100;justify-content:space-around}
+.mobile-nav-btn{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--muted);font-size:8px;font-family:inherit;font-weight:600;cursor:pointer;padding:4px 2px;border-radius:8px;min-width:38px;position:relative;transition:var(--tr)}
+.mobile-nav-btn.active{color:var(--gold)}.mobile-nav-btn .nav-icon{font-size:16px}
+.mobile-nav-btn .nav-badge{position:absolute;top:-2px;right:-2px;font-size:7px;font-weight:700;background:var(--red-tn);color:#fff;padding:1px 3px;border-radius:6px}
+.btn{padding:9px 18px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:var(--tr);letter-spacing:0.4px;text-transform:uppercase}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.2)}.btn:active{transform:scale(0.97)}.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0B1528}
+.btn-red{background:var(--red-tn);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-purple{background:var(--purple);color:#fff}.btn-orange{background:var(--orange);color:#fff}.btn-cyan{background:var(--cyan);color:#fff}
+.btn-outline{padding:8px 16px;background:transparent;border:1px solid rgba(189,165,107,0.25);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--gold);transition:var(--tr)}
+.btn-outline:hover{border-color:var(--gold)}.btn-outline-red{border-color:rgba(200,16,46,0.3);color:var(--red-tn)}
+.btn-sm{padding:5px 12px;font-size:10px}.btn-full{width:100%;padding:14px 0}
+.btn-icon{background:none;border:none;color:var(--dim);cursor:pointer;padding:6px;transition:var(--tr);border-radius:6px}.btn-icon:hover{color:var(--gold)}
+.btn-fab{position:fixed;bottom:76px;right:16px;width:50px;height:50px;border-radius:50%;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 24px rgba(189,165,107,0.25);z-index:90;display:none;align-items:center;justify-content:center;color:#0B1528;background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
+.input,.select,.textarea{width:100%;padding:11px 14px;background:rgba(189,165,107,0.04);border:1px solid var(--border-light);border-radius:8px;color:var(--text);font-size:14px;outline:none;font-family:inherit;transition:var(--tr)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(189,165,107,0.08)}.select{cursor:pointer}.textarea{min-height:70px;resize:vertical}
+.label{font-size:10px;color:var(--gold);margin-bottom:5px;display:block;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;transition:var(--tr)}.card-padded{padding:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:var(--tr)}.kpi:hover{border-color:var(--border-light);transform:translateY(-2px)}
+.kpi-bar{position:absolute;top:0;left:0;width:3px;height:100%}
+.kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700}
+.kpi-value{font-size:26px;font-weight:700;margin-top:5px;font-family:'Playfair Display',serif}.kpi-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.table-container{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.table-row{display:grid;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:var(--tr)}.table-row:hover{background:var(--card-hover)}.table-row:last-child{border-bottom:none}
+.mobile-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:var(--tr)}.mobile-card:hover{border-color:var(--border-light)}
+.mobile-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.mobile-card-title{font-size:14px;font-weight:600}.mobile-card-id{font-size:10px;color:var(--dim);margin-top:2px}
+.mobile-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mobile-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:12px;animation:fadeIn 0.2s}
+.modal{background:linear-gradient(180deg,#152240,#0F1C33);border:1px solid var(--border-light);border-radius:18px;padding:24px;max-width:94vw;max-height:90vh;overflow-y:auto;width:540px;animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:18px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold-light)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-span{grid-column:1/-1}
+.filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-group{display:flex;gap:2px;background:rgba(189,165,107,0.04);border-radius:9px;padding:3px;border:1px solid var(--border);flex-wrap:wrap}
+.filter-btn{padding:6px 12px;border-radius:6px;border:none;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);white-space:nowrap;transition:var(--tr)}.filter-btn.active{background:rgba(189,165,107,0.12);color:var(--gold)}
+.spacer{flex:1}.empty{padding:40px 20px;text-align:center;color:var(--dim);font-size:13px;font-style:italic}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.section-title{font-size:16px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold-light);margin-bottom:14px;margin-top:28px;padding-bottom:8px;border-bottom:1px solid var(--border)}.section-title:first-child{margin-top:0}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}.stat-row:last-child{border:none}
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#0B1528,#132240,#0B1528)}
+.login-box{width:420px;max-width:100%}.login-header{text-align:center;margin-bottom:32px}
+.login-title{font-size:24px;font-weight:800;font-family:'Playfair Display',serif;color:var(--gold-light)}
+.login-sub{color:var(--muted);font-size:13px;margin-top:8px}
+.error-box{padding:10px 14px;background:rgba(200,16,46,0.08);border:1px solid rgba(200,16,46,0.2);border-radius:10px;color:var(--red-tn);font-size:12px;margin-bottom:14px}
+.success-box{padding:10px 14px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);border-radius:10px;color:var(--green);font-size:12px;margin-bottom:14px}
+.user-badge{display:flex;align-items:center;gap:8px;padding:5px 12px;background:rgba(189,165,107,0.06);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted)}
+.user-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.stats-table{width:100%;border-collapse:collapse;font-size:11px}
+.stats-table th{text-align:left;padding:8px 10px;background:rgba(189,165,107,0.06);color:var(--gold);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid var(--border)}
+.stats-table td{padding:8px 10px;border-bottom:1px solid var(--border)}.stats-table tr:hover td{background:rgba(189,165,107,0.02)}
+.alert-card{background:rgba(200,16,46,0.06);border:1px solid rgba(200,16,46,0.15);border-radius:12px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.alert-card.warn{background:rgba(243,156,18,0.06);border-color:rgba(243,156,18,0.15)}
+.donut-container{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.donut-legend{display:flex;flex-direction:column;gap:4px}
+.donut-legend-item{display:flex;align-items:center;gap:6px;font-size:11px}
+.donut-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:10px}
+.cal-head{text-align:center;font-size:9px;color:var(--gold);font-weight:700;padding:4px;text-transform:uppercase}
+.cal-day{text-align:center;padding:6px 2px;font-size:11px;border-radius:6px;color:var(--dim);min-height:32px}
+.cal-day.has-event{background:rgba(189,165,107,0.1);color:var(--gold);font-weight:600;cursor:pointer;border:1px solid var(--border-light)}
+.cal-day.today{border:1px solid var(--gold);color:var(--gold-light)}
+.cal-day.alert{background:rgba(200,16,46,0.1);color:var(--red-tn);font-weight:600}
+@media(max-width:768px){
+  .header{padding:0 14px;height:54px}.header-title{font-size:13px}.header-sub{display:none}
+  .desktop-tabs{display:none!important}.header-right .user-badge{display:none}.header-right .btn-outline:not(.btn-outline-red){display:none}
+  .mobile-nav{display:flex!important}.btn-fab{display:flex!important}
+  main{padding:14px 12px 90px 12px!important}
+  .form-grid{grid-template-columns:1fr}.form-span{grid-column:1}.grid-2{grid-template-columns:1fr}
+  .modal{padding:20px 16px;width:100%;max-width:100%;border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:92vh}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:12px}.kpi-value{font-size:22px}
+  .desktop-only{display:none!important}.mobile-only{display:block!important}
+  .input,.select,.textarea{font-size:16px;padding:13px}.btn{padding:11px 18px;font-size:13px}.btn-full{padding:15px 0}
+}
+@media(min-width:769px){.mobile-only{display:none!important}.mobile-nav{display:none!important}.btn-fab{display:none!important}}
 </style>
 </head>
 <body>
+<div class="tn-stripe"></div>
 <div id="app"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script type="text/babel">
 const{useState,useEffect,useCallback}=React;
 const SB_URL="https://apfcujkxcxhfrjbafgaa.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwZmN1amt4Y3hoZnJqYmFmZ2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjA0NTksImV4cCI6MjA4Njg5NjQ1OX0.S-29PtjyHn1knDIfdVERhLXCDh_JS0tc3oZqAEqwVQ0";
-const authApi={async login(e,p){const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||"Échec");return d},async logout(t){await fetch(`${SB_URL}/auth/v1/logout`,{method:"POST",headers:{apikey:SB_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json"}})},async getUser(t){const r=await fetch(`${SB_URL}/auth/v1/user`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${t}`}});if(!r.ok)throw new Error("Expiré");return r.json()}};
-const createApi=(t)=>{const h={apikey:SB_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json",Prefer:"return=representation"};const b=`${SB_URL}/rest/v1`;return{async select(tb,q=""){const r=await fetch(`${b}/${tb}?${q}`,{headers:h});if(!r.ok)throw new Error(r.statusText);return r.json()},async insert(tb,d){const r=await fetch(`${b}/${tb}`,{method:"POST",headers:h,body:JSON.stringify(d)});if(!r.ok){const e=await r.json();throw new Error(e.message||r.statusText)}return r.json()},async update(tb,id,d){const r=await fetch(`${b}/${tb}?id=eq.${id}`,{method:"PATCH",headers:h,body:JSON.stringify(d)});if(!r.ok)throw new Error(r.statusText);return r.json()},async remove(tb,id){const r=await fetch(`${b}/${tb}?id=eq.${id}`,{method:"DELETE",headers:h});if(!r.ok)throw new Error(r.statusText);return true}}};
+const ACTIVITES=["ATO","Activite aerienne","Aerodrome a usage restreint"];
+const SOUS_TYPES={"ATO":["Centre","FSTD"],"Activite aerienne":["Animation touristique","Epandage aerien"],"Aerodrome a usage restreint":["Piste","Helideck"]};
+const STATUTS_AGREMENT=["Actif","Suspendu","Revoque","Expire"];
+const STATUTS_AUTORISATION=["Accordee","Refusee","Expiree","Retiree"];
+const DOMAINES=["OPS","AIR","AIG","AGA","ANS","PEL"];
+const CLASSIFICATIONS=["NC","PC","OBS","OFI"];
+const CRITICITES=["Majeure","Significative","Mineure","Observation"];
 
-// CONSTANTS
-const DOMAINES=["PEL","OPS","AIR","ANS","AIG","LEG","ORG","AGA"];
-const TYPES_AUDIT=["Interne","Externe","Suivi","Spécial"];
-const STATUTS_AUDIT=["Planifié","En cours","Rapport émis","En suivi","Clôturé"];
-const CLASSEMENTS=["NC","PC","OBS","OFI"];
-const CRITICITES=["Bloquant","Majeur","Mineur"];
-const STATUTS_FINDING=["Ouvert","CAPA demandée","CAPA acceptée","En cours","Vérification","Clôturé"];
-const STATUTS_CAPA=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace","Rejetée"];
-const TYPES_PREUVE=["Procédure","Enregistrement","Formation","Capture","Email","Rapport","Autre"];
-const STATUTS_PREUVE=["Soumise","Acceptée","Refusée"];
-const TYPES_AGREMENT=["ATO","AMO","AOC","ATCO","AeMC","FSTD","DTO","Autre"];
-const STATUTS_AGREMENT=["Actif","Suspendu","Révoqué","Expiré"];
-const TYPES_AUTORISATION=["Exploitation aérienne","Formation","Maintenance","Navigation aérienne","Travail aérien","Transport","Survol","Atterrissage","Autre"];
-const STATUTS_AUTORISATION=["Accordée","Refusée","Expirée","Retirée","En cours d'examen"];
-const DECISIONS_RENOUV=["Renouvelé","Renouvelé avec conditions","Refusé","En attente"];
+const authApi={
+  async login(e,p){const r=await fetch(SB_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||"Echec");return d},
+  async logout(t){await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{apikey:SB_KEY,Authorization:"Bearer "+t,"Content-Type":"application/json"}})},
+  async getUser(t){const r=await fetch(SB_URL+"/auth/v1/user",{headers:{apikey:SB_KEY,Authorization:"Bearer "+t}});if(!r.ok)throw new Error("Expire");return r.json()}
+};
+const createApi=(t)=>{
+  const h={apikey:SB_KEY,Authorization:"Bearer "+t,"Content-Type":"application/json",Prefer:"return=representation"};
+  const b=SB_URL+"/rest/v1";
+  return{
+    async select(tb,q){const r=await fetch(b+"/"+tb+"?"+(q||""),{headers:h});if(!r.ok)throw new Error(r.statusText);return r.json()},
+    async insert(tb,d){const r=await fetch(b+"/"+tb,{method:"POST",headers:h,body:JSON.stringify(d)});if(!r.ok){const e=await r.json();throw new Error(e.message||r.statusText)}return r.json()},
+    async update(tb,id,d){const r=await fetch(b+"/"+tb+"?id=eq."+id,{method:"PATCH",headers:h,body:JSON.stringify(d)});if(!r.ok)throw new Error(r.statusText);return r.json()},
+    async remove(tb,id){const r=await fetch(b+"/"+tb+"?id=eq."+id,{method:"DELETE",headers:h});if(!r.ok)throw new Error(r.statusText);return true}
+  }
+};
 
-const SC={"Planifié":"#3B82F6","En cours":"#F59E0B","Rapport émis":"#A78BFA","En suivi":"#22D3EE","Clôturé":"#10B981","Ouvert":"#EF4444","CAPA demandée":"#F59E0B","CAPA acceptée":"#22D3EE","Vérification":"#A78BFA","Brouillon":"rgba(255,255,255,0.4)","Soumise":"#F59E0B","Acceptée":"#22D3EE","Réalisée":"#10B981","Vérifiée efficace":"#10B981","Rejetée":"#EF4444","Refusée":"#EF4444","Actif":"#10B981","Suspendu":"#F59E0B","Révoqué":"#EF4444","Expiré":"rgba(255,255,255,0.4)","Accordée":"#10B981","Retirée":"#EF4444","En cours d'examen":"#3B82F6","Expirée":"rgba(255,255,255,0.4)"};
-const CC={"Bloquant":"#EF4444","Majeur":"#F59E0B","Mineur":"#22D3EE"};
-const XC={"NC":"#EF4444","PC":"#F59E0B","OBS":"#3B82F6","OFI":"#10B981"};
+const SC={"Planifie":"#BDA56B","En cours":"#F39C12","Termine":"#5DADE2","Cloture":"#2ECC71","Ouvert":"#E74C3C","En traitement":"#F39C12","Cloture":"#2ECC71","NC":"#E74C3C","PC":"#F39C12","OBS":"#5DADE2","OFI":"#9B59B6","Actif":"#2ECC71","Suspendu":"#F39C12","Revoque":"#E74C3C","Expire":"rgba(232,228,221,0.3)","Accordee":"#2ECC71","Refusee":"#E74C3C","Expiree":"rgba(232,228,221,0.3)","Retiree":"#E74C3C"};
 
-// SHARED UI
-function Badge({children,color}){return <span className="badge" style={{background:`${color||'#888'}18`,color:color||'#888'}}>{children}</span>}
+function Badge({children,color}){return <span className="badge" style={{background:(color||"#888")+"18",color:color||"#888"}}>{children}</span>}
 function Tag({label}){return <Badge color={SC[label]}>{label}</Badge>}
 function Empty({text}){return <div className="empty">{text}</div>}
-function KPI({label,value,sub,color,pct}){return(<div className="kpi"><div className="kpi-bar" style={{background:color}}/><div className="kpi-label">{label}</div><div style={{display:'flex',alignItems:'flex-end',gap:6}}><div className="kpi-value mono" style={{color}}>{value}</div>{pct!==undefined&&<div style={{fontSize:11,fontWeight:700,marginBottom:4,color:pct>=50?'var(--red)':'var(--green)'}}>{pct}%</div>}</div>{sub&&<div className="kpi-sub">{sub}</div>}</div>)}
-function Modal({onClose,title,width,children}){return(<div className="modal-overlay" onClick={onClose}><div className="modal" style={{width:width||540}} onClick={e=>e.stopPropagation()}><div className="modal-header"><h3 className="modal-title">{title}</h3><button className="btn-icon" onClick={onClose} style={{fontSize:20}}>✕</button></div>{children}</div></div>)}
+function KPI({label,value,sub,color}){return(<div className="kpi"><div className="kpi-bar" style={{background:color}}/><div className="kpi-label">{label}</div><div className="kpi-value mono" style={{color:color}}>{value}</div>{sub&&<div className="kpi-sub">{sub}</div>}</div>)}
+function Modal({onClose,title,width,children}){return(<div className="modal-overlay" onClick={onClose}><div className="modal" style={{width:width||540}} onClick={e=>e.stopPropagation()}><div className="modal-header"><h3 className="modal-title">{title}</h3><button className="btn-icon" onClick={onClose} style={{fontSize:18}}>&#10005;</button></div>{children}</div></div>)}
 function Field({label,span,children}){return <div className={span?"form-span":""}><label className="label">{label}</label>{children}</div>}
-function Sel({value,onChange,options}){return(<select className="select" value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>)}
-function ConfirmDelete({item,onConfirm,onCancel}){return(<Modal onClose={onCancel} title="Supprimer ?" width={400}><p style={{color:'var(--muted)',fontSize:14,lineHeight:1.6}}>Supprimer <strong style={{color:'var(--red)'}}>{item}</strong> ?</p><div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:20}}><button className="btn btn-outline" onClick={onCancel}>Annuler</button><button className="btn btn-red" onClick={onConfirm}>Supprimer</button></div></Modal>)}
-function FAB({onClick,color}){return(<button className="btn-fab" style={{background:color||'var(--accent)'}} onClick={onClick}>+</button>)}
+function Sel({value,onChange,options}){return <select className="select" value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>}
+function ConfirmDelete({item,onConfirm,onCancel}){return(<Modal onClose={onCancel} title="Confirmer la suppression" width={400}><p style={{color:"var(--muted)",fontSize:13,marginBottom:18}}>Supprimer <strong style={{color:"var(--red-tn)"}}>{item}</strong> ?</p><div style={{display:"flex",gap:10,justifyContent:"flex-end"}}><button className="btn btn-outline" onClick={onCancel}>Annuler</button><button className="btn btn-red" onClick={onConfirm}>Supprimer</button></div></Modal>)}
+function FAB({onClick}){return <button className="btn-fab" onClick={onClick}>+</button>}
 
-// CHARTS
-function DonutChart({data,size=120,thickness=18,centerLabel,centerValue}){const total=data.reduce((s,d)=>s+d.value,0);if(total===0)return(<div style={{textAlign:'center',padding:20}}><span style={{color:'var(--dim)',fontSize:13}}>Aucune donnée</span></div>);const r=(size-thickness)/2;const cx=size/2;const cy=size/2;const circ=2*Math.PI*r;let offset=0;return(<div style={{display:'flex',flexDirection:'column',alignItems:'center'}}><svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{overflow:'hidden',display:'block',margin:'0 auto'}}><circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth={thickness}/>{data.filter(d=>d.value>0).map((d,i)=>{const pct=d.value/total;const len=pct*circ;const gap=data.filter(x=>x.value>0).length>1?2:0;const dash=`${Math.max(0,len-gap)} ${circ-Math.max(0,len-gap)}`;const el=<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={d.color} strokeWidth={thickness} strokeDasharray={dash} strokeDashoffset={-offset} strokeLinecap="round" className="progress-ring"/>;offset+=len;return el})}{centerLabel&&<><text x={cx} y={cy-6} textAnchor="middle" fill="var(--text)" fontSize="20" fontWeight="700" fontFamily="JetBrains Mono">{centerValue}</text><text x={cx} y={cy+12} textAnchor="middle" fill="var(--muted)" fontSize="9" fontWeight="600" letterSpacing="0.5">{centerLabel}</text></>}</svg><div className="donut-legend">{data.filter(d=>d.value>0).map((d,i)=>(<div key={i} className="legend-item"><div className="legend-dot" style={{background:d.color}}/><span style={{color:'var(--muted)'}}>{d.label}</span><span className="legend-val" style={{color:d.color}}>{d.value}</span></div>))}</div></div>)}
-function PipelineChart({data}){const mx=Math.max(...data.map(d=>d.value),1);return(<div><div className="pipeline">{data.map((d,i)=>(<div key={i} style={{flex:1,textAlign:'center'}}><div className="pipeline-count" style={{color:d.color}}>{d.value}</div><div style={{height:80,display:'flex',alignItems:'flex-end',justifyContent:'center'}}><div className="pipeline-bar" style={{width:'100%',height:`${Math.max((d.value/mx)*100,6)}%`,background:d.color,opacity:0.7}}/></div><div className="pipeline-label">{d.label}</div></div>))}</div></div>)}
-function ProgressGauge({value,max,label,color}){const pct=max>0?Math.round((value/max)*100):0;return(<div style={{textAlign:'center'}}><svg width={80} height={50} viewBox="0 0 80 50"><path d="M 10 45 A 30 30 0 0 1 70 45" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" strokeLinecap="round"/><path d="M 10 45 A 30 30 0 0 1 70 45" fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(pct/100)*94.25} 94.25`}/><text x="40" y="42" textAnchor="middle" fill={color} fontSize="16" fontWeight="700" fontFamily="JetBrains Mono">{pct}%</text></svg><div style={{fontSize:10,color:'var(--muted)',fontWeight:600,marginTop:2}}>{label}</div></div>)}
+function Donut({data,size}){
+  const s=size||80;const r=s/2;const sw=8;const ir=r-sw;
+  let total=data.reduce((a,d)=>a+d.value,0);if(total===0)total=1;
+  let cum=0;
+  const arcs=data.filter(d=>d.value>0).map(d=>{const pct=d.value/total;const start=cum*2*Math.PI-Math.PI/2;cum+=pct;const end=cum*2*Math.PI-Math.PI/2;const large=pct>0.5?1:0;const x1=r+ir*Math.cos(start);const y1=r+ir*Math.sin(start);const x2=r+ir*Math.cos(end);const y2=r+ir*Math.sin(end);const ox1=r+(r)*Math.cos(start);const oy1=r+(r)*Math.sin(start);const ox2=r+(r)*Math.cos(end);const oy2=r+(r)*Math.sin(end);return{...d,path:`M${ox1} ${oy1} A${r} ${r} 0 ${large} 1 ${ox2} ${oy2} L${x2} ${y2} A${ir} ${ir} 0 ${large} 0 ${x1} ${y1}Z`}});
+  return(<svg width={s} height={s} viewBox={"0 0 "+s+" "+s}>{arcs.map((a,i)=><path key={i} d={a.path} fill={a.color} opacity="0.85"/>)}<text x={r} y={r+1} textAnchor="middle" dominantBaseline="middle" fill="var(--text)" fontSize="14" fontWeight="700" fontFamily="'Playfair Display',serif">{data.reduce((a,d)=>a+d.value,0)}</text></svg>)
+}
 
-// Helper: days until expiry
-function daysUntil(date){if(!date)return null;const d=Math.ceil((new Date(date)-new Date())/864e5);return d}
-function ExpiryBadge({date}){const d=daysUntil(date);if(d===null)return <span style={{fontSize:11,color:'var(--dim)'}}>—</span>;if(d<0)return <Badge color="#EF4444">Expiré {Math.abs(d)}j</Badge>;if(d<=30)return <span className="expiry-warn"><Badge color="#F59E0B">{d}j restants</Badge></span>;if(d<=90)return <Badge color="#22D3EE">{d}j restants</Badge>;return <span style={{fontSize:11,color:'var(--dim)'}}>{date}</span>}
+function daysUntil(dateStr){if(!dateStr)return Infinity;const d=new Date(dateStr);const now=new Date();now.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.ceil((d-now)/(1000*60*60*24))}
 
-// LOGIN
-function LoginScreen({onLogin}){const[email,setEmail]=useState("");const[pw,setPw]=useState("");const[ld,setLd]=useState(false);const[err,setErr]=useState("");const go=async()=>{if(!email||!pw){setErr("Remplissez les deux champs");return}setLd(true);setErr("");try{const d=await authApi.login(email,pw);localStorage.setItem("sb_token",d.access_token);localStorage.setItem("sb_user_email",d.user.email);onLogin(d.access_token,d.user)}catch(e){setErr(e.message==="Invalid login credentials"?"Email ou mot de passe incorrect":e.message)}setLd(false)};return(<div className="login-page"><div className="login-box"><div className="login-header"><div className="login-icon">✈️</div><h1 className="login-title">DGAC — Plateforme de Surveillance</h1><p className="login-sub">Connectez-vous pour accéder</p></div><div className="card card-padded"><div style={{marginBottom:16}}><label className="label">Email</label><input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="votre.email@dgac.tn" onKeyDown={e=>e.key==='Enter'&&go()}/></div><div style={{marginBottom:16}}><label className="label">Mot de passe</label><input className="input" type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&go()}/></div>{err&&<div className="error-box">{err}</div>}<button className="btn btn-primary btn-full" onClick={go} disabled={ld} style={{background:'linear-gradient(135deg,#3B82F6,#1D4ED8)'}}>{ld?"Connexion...":"Se connecter"}</button></div><p style={{textAlign:'center',marginTop:14,fontSize:12,color:'var(--dim)'}}>Direction Générale de l'Aviation Civile — Tunisie</p></div></div>)}
+/* ===== LOGIN ===== */
+function LoginScreen({onLogin}){
+  const[email,setEmail]=useState("");const[pw,setPw]=useState("");const[ld,setLd]=useState(false);const[err,setErr]=useState("");
+  const go=async()=>{if(!email||!pw){setErr("Remplissez les deux champs");return}setLd(true);setErr("");try{const d=await authApi.login(email,pw);localStorage.setItem("audit_token",d.access_token);onLogin(d.access_token,d.user)}catch(e){setErr(e.message==="Invalid login credentials"?"Email ou mot de passe incorrect":e.message)}setLd(false)};
+  return(<div className="login-page"><div className="login-box"><div className="login-header"><div style={{width:60,height:60,borderRadius:14,background:"linear-gradient(135deg,var(--gold),var(--gold-dark))",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px",fontSize:26,boxShadow:"0 4px 24px rgba(189,165,107,0.3)"}}>&#9992;</div><h1 className="login-title">Suivi des Audits</h1><p className="login-sub">Direction Generale de l'Aviation Civile — Tunisie</p></div><div className="card card-padded"><div style={{marginBottom:16}}><label className="label">Email</label><input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="email@dgac.tn" onKeyDown={e=>e.key==="Enter"&&go()}/></div><div style={{marginBottom:16}}><label className="label">Mot de passe</label><input className="input" type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" onKeyDown={e=>e.key==="Enter"&&go()}/></div>{err&&<div className="error-box">{err}</div>}<button className="btn btn-gold btn-full" onClick={go} disabled={ld}>{ld?"Connexion...":"Se connecter"}</button></div></div></div>)
+}
 
-// ============================================================
-// DASHBOARD
-// ============================================================
-function Dashboard({audits,findings,capa,preuves,agrements,autorisations,onNav}){
-  const today=new Date().toISOString().slice(0,10);const open=findings.filter(f=>f.statut!=="Clôturé");const closed=findings.filter(f=>f.statut==="Clôturé");const overdue=open.filter(f=>f.echeance&&f.echeance<today);const bloq=open.filter(f=>f.criticite==="Bloquant");const actifs=audits.filter(a=>["En cours","Rapport émis","En suivi"].includes(a.statut));const closureRate=findings.length>0?Math.round((closed.length/findings.length)*100):0;const overdueRate=open.length>0?Math.round((overdue.length/open.length)*100):0;
-  const agrActifs=agrements.filter(a=>a.statut==="Actif");const agrExpSoon=agrements.filter(a=>{const d=daysUntil(a.date_expiration);return a.statut==="Actif"&&d!==null&&d>=0&&d<=90});const autActives=autorisations.filter(a=>a.statut==="Accordée");
-  const auditStatData=STATUTS_AUDIT.map(s=>({label:s,value:audits.filter(a=>a.statut===s).length,color:SC[s]}));
-  const classData=CLASSEMENTS.map(c=>({label:c,value:findings.filter(f=>f.classement===c).length,color:XC[c]}));
-  const critData=CRITICITES.map(c=>({label:c,value:open.filter(f=>f.criticite===c).length,color:CC[c]}));
-  const agrStatData=STATUTS_AGREMENT.map(s=>({label:s,value:agrements.filter(a=>a.statut===s).length,color:SC[s]}));
-  const findPipe=["Ouvert","CAPA demandée","En cours","Vérification","Clôturé"].map(s=>({label:s==="CAPA demandée"?"CAPA dem.":s,value:findings.filter(f=>f.statut===s).length,color:SC[s]}));
-  const capaPipe=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée"].map(s=>{const full=s==="Vérifiée"?"Vérifiée efficace":s;return{label:s,value:capa.filter(c=>c.statut===full).length,color:SC[full]||'#888'}});
+/* ===== PDF EXPORTS ===== */
+function exportAuditPDF(audit,findings,capas,preuves){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF();
+  doc.setFontSize(14);doc.text("DGAC — Rapport d'Audit",14,18);
+  doc.setFontSize(10);doc.text("Republique Tunisienne — Direction Generale de l'Aviation Civile",14,26);
+  doc.setLineWidth(0.5);doc.line(14,30,196,30);
+  doc.setFontSize(11);doc.text("Ref: "+(audit.audit_id||""),14,40);doc.text("Entite: "+(audit.entite||""),14,47);doc.text("Domaine: "+(audit.domaine||""),100,40);doc.text("Statut: "+(audit.statut||""),100,47);doc.text("Date debut: "+(audit.date_debut||""),14,54);doc.text("Date fin: "+(audit.date_fin||""),100,54);doc.text("Responsable: "+(audit.responsable||""),14,61);
+  if(audit.objectif){doc.text("Objectif: "+audit.objectif.slice(0,90),14,68)}
+  const af=findings.filter(f=>f.audit_uuid===audit.id);
+  if(af.length>0){doc.autoTable({startY:78,head:[["Ref","Classification","Criticite","Statut","Description"]],body:af.map(f=>[f.finding_id||"",f.classification||"",f.criticite||"",f.statut||"",(f.description||"").slice(0,50)]),styles:{fontSize:8},headStyles:{fillColor:[18,32,61]}})}
+  const ac=capas.filter(c=>af.some(f=>f.id===c.finding_uuid));
+  if(ac.length>0){const y=doc.lastAutoTable?doc.lastAutoTable.finalY+10:90;doc.setFontSize(11);doc.text("Actions correctives (CAPA):",14,y);doc.autoTable({startY:y+6,head:[["Ref","Description","Responsable","Echeance","Statut"]],body:ac.map(c=>[c.capa_id||"",(c.description||"").slice(0,40),c.responsable||"",c.echeance||"",c.statut||""]),styles:{fontSize:8},headStyles:{fillColor:[18,32,61]}})}
+  doc.save("Audit_"+(audit.audit_id||"rapport")+".pdf")
+}
+function exportAgrementsPDF(agrements){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF("l");
+  doc.setFontSize(14);doc.text("DGAC — Liste des Agrements",14,18);
+  doc.setFontSize(10);doc.text("Date: "+new Date().toLocaleDateString("fr"),14,26);
+  doc.autoTable({startY:34,head:[["Entite","Activite","Type","Numero","Delivrance","Expiration","Statut"]],body:agrements.map(a=>[a.entite||"",a.activite||"",a.type_agrement||"",a.numero||"",a.date_delivrance||"",a.date_expiration||"",a.statut||""]),styles:{fontSize:8},headStyles:{fillColor:[18,32,61]}});
+  doc.save("Agrements_"+new Date().toISOString().slice(0,10)+".pdf")
+}
+function exportAgrementFiche(agr,auts){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF();
+  doc.setFontSize(14);doc.text("DGAC — Fiche Agrement",14,18);
+  doc.setFontSize(11);doc.text("Entite: "+(agr.entite||""),14,34);doc.text("Activite: "+(agr.activite||""),14,41);doc.text("Type: "+(agr.type_agrement||""),14,48);doc.text("Numero: "+(agr.numero||""),100,34);doc.text("Statut: "+(agr.statut||""),100,41);doc.text("Delivrance: "+(agr.date_delivrance||""),14,55);doc.text("Expiration: "+(agr.date_expiration||""),100,55);
+  if(agr.observations){doc.text("Observations: "+(agr.observations||"").slice(0,80),14,62)}
+  const linked=auts.filter(a=>a.agrement_uuid===agr.id);
+  if(linked.length>0){doc.autoTable({startY:72,head:[["Type","Beneficiaire","Validite","Statut"]],body:linked.map(a=>[a.type_autorisation||"",a.beneficiaire||"",a.date_validite||"",a.statut||""]),styles:{fontSize:9},headStyles:{fillColor:[18,32,61]}})}
+  doc.save("Agrement_"+(agr.numero||"fiche")+".pdf")
+}
+function exportCAPARetardPDF(capas,findings){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF("l");
+  doc.setFontSize(14);doc.text("DGAC — CAPA en retard",14,18);
+  doc.setFontSize(10);doc.text("Date: "+new Date().toLocaleDateString("fr"),14,26);
+  const retard=capas.filter(c=>c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee");
+  doc.autoTable({startY:34,head:[["Ref CAPA","Ecart","Description","Responsable","Echeance","Retard (j)","Statut"]],body:retard.map(c=>{const f=findings.find(x=>x.id===c.finding_uuid);const jours=Math.ceil((new Date()-new Date(c.echeance))/(1000*60*60*24));return[c.capa_id||"",f?f.finding_id:"",( c.description||"").slice(0,35),c.responsable||"",c.echeance||"",jours,c.statut||""]}),styles:{fontSize:8},headStyles:{fillColor:[18,32,61]}});
+  doc.save("CAPA_retard_"+new Date().toISOString().slice(0,10)+".pdf")
+}
+
+/* ===== DASHBOARD ===== */
+function Dashboard({audits,findings,capas,preuves,agrements,autorisations,onNav}){
+  const expSoon=agrements.filter(a=>a.statut==="Actif"&&daysUntil(a.date_expiration)<=30&&daysUntil(a.date_expiration)>=0);
+  const expired=agrements.filter(a=>a.statut==="Actif"&&daysUntil(a.date_expiration)<0);
+  const capaRetard=capas.filter(c=>c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee");
+  const totalAlerts=expSoon.length+expired.length+capaRetard.length;
+  const fOuvert=findings.filter(f=>f.statut==="Ouvert").length;const fClos=findings.filter(f=>f.statut==="Cloture").length;
+  const tauxClot=findings.length>0?Math.round((fClos/findings.length)*100):0;
+  const donutAudit=[{label:"Planifie",value:audits.filter(a=>a.statut==="Planifie").length,color:"#BDA56B"},{label:"En cours",value:audits.filter(a=>a.statut==="En cours").length,color:"#F39C12"},{label:"Termine",value:audits.filter(a=>a.statut==="Termine").length,color:"#5DADE2"},{label:"Cloture",value:audits.filter(a=>a.statut==="Cloture").length,color:"#2ECC71"}];
+  const donutFind=[{label:"NC",value:findings.filter(f=>f.classification==="NC").length,color:"#E74C3C"},{label:"PC",value:findings.filter(f=>f.classification==="PC").length,color:"#F39C12"},{label:"OBS",value:findings.filter(f=>f.classification==="OBS").length,color:"#5DADE2"},{label:"OFI",value:findings.filter(f=>f.classification==="OFI").length,color:"#9B59B6"}];
   return(<div>
+    {totalAlerts>0&&(<div className="card card-padded" style={{marginBottom:20,borderColor:"rgba(200,16,46,0.2)",background:"rgba(200,16,46,0.03)"}}>
+      <div className="section-title" style={{marginTop:0,color:"var(--red-tn)"}}>Alertes ({totalAlerts})</div>
+      {expired.map(a=><div key={a.id} className="alert-card"><div><div style={{fontSize:13,fontWeight:600}}>{a.entite} — {a.type_agrement}</div><div style={{fontSize:11,color:"var(--red-tn)"}}>EXPIRE depuis {Math.abs(daysUntil(a.date_expiration))} jours</div></div><Tag label="Expire"/></div>)}
+      {expSoon.map(a=><div key={a.id} className="alert-card warn"><div><div style={{fontSize:13,fontWeight:600}}>{a.entite} — {a.type_agrement}</div><div style={{fontSize:11,color:"var(--orange)"}}>Expire dans {daysUntil(a.date_expiration)} jours ({a.date_expiration})</div></div><Tag label="Actif"/></div>)}
+      {capaRetard.slice(0,5).map(c=><div key={c.id} className="alert-card"><div><div style={{fontSize:13,fontWeight:600}}>CAPA {c.capa_id}</div><div style={{fontSize:11,color:"var(--red-tn)"}}>Echeance depassee: {c.echeance}</div></div><Tag label={c.statut}/></div>)}
+    </div>)}
     <div className="kpi-grid">
-      <KPI label="Audits actifs" value={actifs.length} sub={`${audits.length} total`} color="#3B82F6"/>
-      <KPI label="Écarts ouverts" value={open.length} sub={`${findings.length} total`} color="#F59E0B"/>
-      <KPI label="Bloquants" value={bloq.length} sub="Criticité haute" color="#EF4444"/>
-      <KPI label="Taux clôture" value={`${closureRate}%`} sub={`${closed.length}/${findings.length}`} color="#10B981"/>
-      <KPI label="Agréments actifs" value={agrActifs.length} sub={`${agrements.length} total`} color="#14B8A6"/>
-      <KPI label="Expirent bientôt" value={agrExpSoon.length} sub="≤ 90 jours" color={agrExpSoon.length>0?"#F59E0B":"#10B981"}/>
-      <KPI label="Autorisations" value={autActives.length} sub={`${autorisations.length} total`} color="#EC4899"/>
-    </div>
-    {overdue.length>0&&(<div className="alert alert-red"><div className="alert-title" style={{color:'var(--red)'}}>⚠ Écarts en retard ({overdue.length})</div>{overdue.sort((a,b)=>Math.ceil((new Date(today)-new Date(b.echeance))/864e5)-Math.ceil((new Date(today)-new Date(a.echeance))/864e5)).slice(0,5).map((f,i)=>{const days=Math.ceil((new Date(today)-new Date(f.echeance))/864e5);const au=audits.find(a=>a.id===f.audit_uuid);return(<div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'5px 0',borderBottom:i<4?'1px solid var(--border)':'none',gap:8}}><div style={{fontSize:12,color:'rgba(255,255,255,0.6)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}><span className="mono" style={{color:'var(--dim)',fontSize:10,marginRight:6}}>{f.finding_id}</span>{au?.entite} — {f.titre?.slice(0,30)}</div><Badge color="#EF4444">{days}j</Badge></div>)})}</div>)}
-    {agrExpSoon.length>0&&(<div className="alert alert-orange"><div className="alert-title" style={{color:'var(--orange)'}}>🔔 Agréments expirant bientôt ({agrExpSoon.length})</div>{agrExpSoon.sort((a,b)=>daysUntil(a.date_expiration)-daysUntil(b.date_expiration)).slice(0,5).map((a,i)=>{const d=daysUntil(a.date_expiration);return(<div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'5px 0',borderBottom:i<4?'1px solid var(--border)':'none',gap:8}}><div style={{fontSize:12,color:'rgba(255,255,255,0.6)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}><Badge color="#14B8A6">{a.type_agrement}</Badge> <span style={{marginLeft:6}}>{a.entite}</span></div><Badge color={d<=30?"#EF4444":"#F59E0B"}>{d}j</Badge></div>)})}</div>)}
-    <div className="section-title">📊 Vue d'ensemble</div>
-    <div className="grid-3" style={{marginBottom:20}}>
-      <div className="chart-card"><div className="chart-title">Audits</div><DonutChart data={auditStatData} centerLabel="AUDITS" centerValue={audits.length}/></div>
-      <div className="chart-card"><div className="chart-title">Écarts</div><DonutChart data={classData} centerLabel="ÉCARTS" centerValue={findings.length}/></div>
-      <div className="chart-card"><div className="chart-title">Agréments</div><DonutChart data={agrStatData} centerLabel="AGRÉMENTS" centerValue={agrements.length}/></div>
-    </div>
-    <div className="grid-2" style={{marginBottom:20}}>
-      <div className="chart-card"><div className="chart-title">Pipeline écarts</div><PipelineChart data={findPipe}/></div>
-      <div className="chart-card"><div className="chart-title">Pipeline CAPA</div><PipelineChart data={capaPipe}/></div>
+      <KPI label="Audits" value={audits.length} sub={audits.filter(a=>a.statut==="En cours").length+" en cours"} color="var(--gold)"/>
+      <KPI label="Ecarts" value={findings.length} sub={fOuvert+" ouverts"} color="var(--cyan)"/>
+      <KPI label="Taux cloture" value={tauxClot+"%"} color={tauxClot>=70?"var(--green)":"var(--orange)"}/>
+      <KPI label="Agrements" value={agrements.length} sub={agrements.filter(a=>a.statut==="Actif").length+" actifs"} color="var(--green)"/>
+      <KPI label="CAPA retard" value={capaRetard.length} color={capaRetard.length>0?"var(--red-tn)":"var(--green)"}/>
     </div>
     <div className="grid-2">
-      <div className="chart-card"><div className="chart-title">Indicateurs</div><div style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:10,padding:'8px 0'}}><ProgressGauge value={closed.length} max={findings.length} label="Clôture" color="#10B981"/><ProgressGauge value={preuves.filter(p=>p.statut==="Acceptée").length} max={preuves.length} label="Preuves OK" color="#22D3EE"/><ProgressGauge value={capa.filter(c=>["Réalisée","Vérifiée efficace"].includes(c.statut)).length} max={capa.length} label="CAPA" color="#A78BFA"/></div></div>
-      <div className="chart-card"><div className="chart-title">Audits actifs <button className="btn-outline btn-sm" onClick={()=>onNav("audits")} style={{marginLeft:'auto'}}>→</button></div>{actifs.length===0&&<div style={{color:'var(--dim)',fontSize:13}}>Aucun</div>}{actifs.slice(0,5).map(a=>{const op=findings.filter(f=>f.audit_uuid===a.id&&f.statut!=="Clôturé").length;return(<div key={a.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid var(--border)',gap:6}}><div style={{minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}><span className="mono" style={{fontSize:10,color:'var(--dim)',marginRight:6}}>{a.audit_id}</span><span style={{fontSize:12}}>{a.entite}</span></div><div style={{display:'flex',gap:4,flexShrink:0}}><Tag label={a.statut}/>{op>0&&<Badge color="#F59E0B">{op}</Badge>}</div></div>)})}</div>
+      <div className="card card-padded"><div className="section-title" style={{marginTop:0}}>Audits par statut</div><div className="donut-container"><Donut data={donutAudit}/><div className="donut-legend">{donutAudit.map(d=><div key={d.label} className="donut-legend-item"><div className="donut-legend-dot" style={{background:d.color}}/>{d.label}: <strong>{d.value}</strong></div>)}</div></div></div>
+      <div className="card card-padded"><div className="section-title" style={{marginTop:0}}>Ecarts par classification</div><div className="donut-container"><Donut data={donutFind}/><div className="donut-legend">{donutFind.map(d=><div key={d.label} className="donut-legend-item"><div className="donut-legend-dot" style={{background:d.color}}/>{d.label}: <strong>{d.value}</strong></div>)}</div></div></div>
+    </div>
+    <div className="grid-2" style={{marginTop:16}}>
+      <div className="card card-padded"><div className="section-title" style={{marginTop:0}}>Ecarts par domaine</div>{DOMAINES.map(d=>{const n=findings.filter(f=>f.domaine===d).length;const pct=findings.length>0?Math.round((n/findings.length)*100):0;return(<div key={d} className="stat-row"><span style={{fontSize:12,fontWeight:600}}>{d}</span><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:80,height:6,background:"var(--border)",borderRadius:3,overflow:"hidden"}}><div style={{width:pct+"%",height:"100%",background:"var(--gold)",borderRadius:3}}/></div><span className="mono" style={{fontSize:11,color:"var(--gold)"}}>{n}</span></div></div>)})}</div>
+      <div className="card card-padded"><div className="section-title" style={{marginTop:0}}>Agrements par activite</div>{ACTIVITES.map(act=>{const n=agrements.filter(a=>a.activite===act).length;const actifs=agrements.filter(a=>a.activite===act&&a.statut==="Actif").length;return(<div key={act} className="stat-row"><span style={{fontSize:12,fontWeight:600}}>{act}</span><div style={{display:"flex",gap:6}}><Badge color="var(--gold)">{n} total</Badge><Badge color="var(--green)">{actifs} actifs</Badge></div></div>)})}</div>
     </div>
   </div>)
 }
 
-// ============================================================
-// FORMS - AUDIT / FINDING / CAPA / PREUVE (same as before)
-// ============================================================
-function AuditForm({audit,onClose,onSave}){const[f,setF]=useState(audit||{audit_id:"",domaine:"OPS",entite:"",type_audit:"Interne",date_debut:"",date_fin:"",statut:"Planifié",equipe:"",cycle_surveillance:"",notes:""});return(<Modal onClose={onClose} title={audit?`Modifier ${audit.audit_id}`:"Nouvel Audit"}><div className="form-grid"><Field label="Audit ID *"><input className="input" value={f.audit_id} onChange={e=>setF({...f,audit_id:e.target.value})} placeholder="2026-PEL-003"/></Field><Field label="Domaine"><Sel value={f.domaine} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field><Field label="Entité *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})}/></Field><Field label="Type"><Sel value={f.type_audit} onChange={v=>setF({...f,type_audit:v})} options={TYPES_AUDIT}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AUDIT}/></Field><Field label="Date début"><input type="date" className="input" value={f.date_debut||""} onChange={e=>setF({...f,date_debut:e.target.value})}/></Field><Field label="Date fin"><input type="date" className="input" value={f.date_fin||""} onChange={e=>setF({...f,date_fin:e.target.value})}/></Field><Field label="Équipe"><input className="input" value={f.equipe||""} onChange={e=>setF({...f,equipe:e.target.value})}/></Field><Field label="Cycle"><input className="input" value={f.cycle_surveillance||""} onChange={e=>setF({...f,cycle_surveillance:e.target.value})} placeholder="Annuel"/></Field><Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field></div><button className="btn btn-primary btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{audit?"Enregistrer":"Créer"}</button></Modal>)}
-function FindingForm({finding,audits,onClose,onSave}){const[f,setF]=useState(finding||{finding_id:"",audit_uuid:audits[0]?.id||"",titre:"",constat:"",reference_regl:"",classement:"OBS",criticite:"Mineur",echeance:"",statut:"Ouvert",cause_racine:""});return(<Modal onClose={onClose} title={finding?`Modifier ${finding.finding_id}`:"Nouvel Écart"} width={580}><div className="form-grid"><Field label="Finding ID *"><input className="input" value={f.finding_id} onChange={e=>setF({...f,finding_id:e.target.value})}/></Field><Field label="Audit"><select className="select" value={f.audit_uuid||""} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">—</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field><Field label="Titre *" span><input className="input" value={f.titre} onChange={e=>setF({...f,titre:e.target.value})}/></Field><Field label="Constat" span><textarea className="textarea" value={f.constat||""} onChange={e=>setF({...f,constat:e.target.value})}/></Field><Field label="Réf. régl."><input className="input" value={f.reference_regl||""} onChange={e=>setF({...f,reference_regl:e.target.value})}/></Field><Field label="Classement"><Sel value={f.classement} onChange={v=>setF({...f,classement:v})} options={CLASSEMENTS}/></Field><Field label="Criticité"><Sel value={f.criticite} onChange={v=>setF({...f,criticite:v})} options={CRITICITES}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_FINDING}/></Field><Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field><Field label="Cause racine"><input className="input" value={f.cause_racine||""} onChange={e=>setF({...f,cause_racine:e.target.value})}/></Field></div><button className="btn btn-orange btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{finding?"Enregistrer":"Créer"}</button></Modal>)}
-function CapaForm({capa,findings,onClose,onSave}){const[f,setF]=useState(capa||{action_id:"",finding_uuid:findings[0]?.id||"",action_corrective:"",action_preventive:"",responsable:"",echeance:"",statut:"Brouillon",avancement:0,cause_racine_detail:"",commentaire_verif:""});return(<Modal onClose={onClose} title={capa?`Modifier ${capa.action_id}`:"Nouvelle CAPA"} width={580}><div className="form-grid"><Field label="Action ID *"><input className="input" value={f.action_id} onChange={e=>setF({...f,action_id:e.target.value})}/></Field><Field label="Finding"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">—</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field><Field label="Action corrective" span><textarea className="textarea" value={f.action_corrective||""} onChange={e=>setF({...f,action_corrective:e.target.value})}/></Field><Field label="Action préventive" span><textarea className="textarea" value={f.action_preventive||""} onChange={e=>setF({...f,action_preventive:e.target.value})}/></Field><Field label="Responsable"><input className="input" value={f.responsable||""} onChange={e=>setF({...f,responsable:e.target.value})}/></Field><Field label="Échéance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_CAPA}/></Field><Field label="%"><input type="number" className="input" min={0} max={100} value={f.avancement} onChange={e=>setF({...f,avancement:Number(e.target.value)})}/></Field><Field label="Cause racine" span><textarea className="textarea" value={f.cause_racine_detail||""} onChange={e=>setF({...f,cause_racine_detail:e.target.value})}/></Field><Field label="Vérification" span><textarea className="textarea" value={f.commentaire_verif||""} onChange={e=>setF({...f,commentaire_verif:e.target.value})}/></Field></div><button className="btn btn-green btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{capa?"Enregistrer":"Créer"}</button></Modal>)}
-function PreuveForm({preuve,findings,capas,onClose,onSave}){const[f,setF]=useState(preuve||{evidence_id:"",finding_uuid:"",capa_uuid:"",type_preuve:"Autre",fichier_url:"",version:"v1.0",date_preuve:new Date().toISOString().slice(0,10),statut:"Soumise",motif_refus:"",date_expiration:""});return(<Modal onClose={onClose} title={preuve?`Modifier ${preuve.evidence_id}`:"Nouvelle Preuve"} width={520}><div className="form-grid"><Field label="Evidence ID *"><input className="input" value={f.evidence_id} onChange={e=>setF({...f,evidence_id:e.target.value})}/></Field><Field label="Type"><Sel value={f.type_preuve} onChange={v=>setF({...f,type_preuve:v})} options={TYPES_PREUVE}/></Field><Field label="Finding"><select className="select" value={f.finding_uuid||""} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">—</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id} — {fi.titre}</option>)}</select></Field><Field label="CAPA"><select className="select" value={f.capa_uuid||""} onChange={e=>setF({...f,capa_uuid:e.target.value})}><option value="">—</option>{capas.map(c=><option key={c.id} value={c.id}>{c.action_id}</option>)}</select></Field><Field label="Lien" span><input className="input" value={f.fichier_url||""} onChange={e=>setF({...f,fichier_url:e.target.value})}/></Field><Field label="Version"><input className="input" value={f.version||""} onChange={e=>setF({...f,version:e.target.value})}/></Field><Field label="Date"><input type="date" className="input" value={f.date_preuve||""} onChange={e=>setF({...f,date_preuve:e.target.value})}/></Field><Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_PREUVE}/></Field><Field label="Expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>{f.statut==="Refusée"&&<Field label="Motif" span><textarea className="textarea" value={f.motif_refus||""} onChange={e=>setF({...f,motif_refus:e.target.value})}/></Field>}</div><button className="btn btn-purple btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{preuve?"Enregistrer":"Ajouter"}</button></Modal>)}
+/* ===== FORMS ===== */
+function AuditForm({audit,onClose,onSave}){
+  const[f,setF]=useState(audit||{audit_id:"",entite:"",domaine:DOMAINES[0],date_debut:"",date_fin:"",responsable:"",statut:"Planifie",objectif:"",scope:"",notes:""});
+  return(<Modal onClose={onClose} title={audit?"Modifier audit":"Nouvel Audit"}><div className="form-grid">
+    <Field label="Ref Audit *"><input className="input" value={f.audit_id} onChange={e=>setF({...f,audit_id:e.target.value})} placeholder="AUD-2026-001"/></Field>
+    <Field label="Domaine"><Sel value={f.domaine} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field>
+    <Field label="Entite *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})} placeholder="Nom de l'entite auditee"/></Field>
+    <Field label="Date debut"><input type="date" className="input" value={f.date_debut||""} onChange={e=>setF({...f,date_debut:e.target.value})}/></Field>
+    <Field label="Date fin"><input type="date" className="input" value={f.date_fin||""} onChange={e=>setF({...f,date_fin:e.target.value})}/></Field>
+    <Field label="Responsable"><input className="input" value={f.responsable||""} onChange={e=>setF({...f,responsable:e.target.value})}/></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={["Planifie","En cours","Termine","Cloture"]}/></Field>
+    <Field label="Objectif" span><textarea className="textarea" value={f.objectif||""} onChange={e=>setF({...f,objectif:e.target.value})}/></Field>
+    <Field label="Scope" span><textarea className="textarea" value={f.scope||""} onChange={e=>setF({...f,scope:e.target.value})}/></Field>
+    <Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{audit?"Enregistrer":"Creer"}</button></Modal>)
+}
+function FindingForm({finding,audits,onClose,onSave}){
+  const[f,setF]=useState(finding||{finding_id:"",audit_uuid:"",domaine:DOMAINES[0],classification:CLASSIFICATIONS[0],criticite:CRITICITES[0],description:"",reference_reglementaire:"",statut:"Ouvert",date_detection:"",echeance:"",notes:""});
+  return(<Modal onClose={onClose} title={finding?"Modifier ecart":"Nouvel Ecart"}><div className="form-grid">
+    <Field label="Ref Ecart *"><input className="input" value={f.finding_id} onChange={e=>setF({...f,finding_id:e.target.value})}/></Field>
+    <Field label="Audit *"><select className="select" value={f.audit_uuid} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">—</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field>
+    <Field label="Domaine"><Sel value={f.domaine} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field>
+    <Field label="Classification"><Sel value={f.classification} onChange={v=>setF({...f,classification:v})} options={CLASSIFICATIONS}/></Field>
+    <Field label="Criticite"><Sel value={f.criticite} onChange={v=>setF({...f,criticite:v})} options={CRITICITES}/></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={["Ouvert","En traitement","Cloture"]}/></Field>
+    <Field label="Date detection"><input type="date" className="input" value={f.date_detection||""} onChange={e=>setF({...f,date_detection:e.target.value})}/></Field>
+    <Field label="Echeance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field>
+    <Field label="Description" span><textarea className="textarea" value={f.description||""} onChange={e=>setF({...f,description:e.target.value})}/></Field>
+    <Field label="Ref reglementaire" span><input className="input" value={f.reference_reglementaire||""} onChange={e=>setF({...f,reference_reglementaire:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{finding?"Enregistrer":"Creer"}</button></Modal>)
+}
+function CAPAForm({capa,findings,onClose,onSave}){
+  const[f,setF]=useState(capa||{capa_id:"",finding_uuid:"",description:"",responsable:"",echeance:"",statut:"Brouillon",type_action:"Corrective",notes:""});
+  return(<Modal onClose={onClose} title={capa?"Modifier CAPA":"Nouvelle CAPA"}><div className="form-grid">
+    <Field label="Ref CAPA *"><input className="input" value={f.capa_id} onChange={e=>setF({...f,capa_id:e.target.value})}/></Field>
+    <Field label="Ecart *"><select className="select" value={f.finding_uuid} onChange={e=>setF({...f,finding_uuid:e.target.value})}><option value="">—</option>{findings.map(fi=><option key={fi.id} value={fi.id}>{fi.finding_id}</option>)}</select></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={["Brouillon","Soumise","Acceptee","En cours","Realisee","Verifiee","Cloturee"]}/></Field>
+    <Field label="Type"><Sel value={f.type_action} onChange={v=>setF({...f,type_action:v})} options={["Corrective","Preventive"]}/></Field>
+    <Field label="Responsable"><input className="input" value={f.responsable||""} onChange={e=>setF({...f,responsable:e.target.value})}/></Field>
+    <Field label="Echeance"><input type="date" className="input" value={f.echeance||""} onChange={e=>setF({...f,echeance:e.target.value})}/></Field>
+    <Field label="Description" span><textarea className="textarea" value={f.description||""} onChange={e=>setF({...f,description:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{capa?"Enregistrer":"Creer"}</button></Modal>)
+}
+function PreuveForm({preuve,capas,onClose,onSave}){
+  const[f,setF]=useState(preuve||{preuve_id:"",capa_uuid:"",type_preuve:"Document",description:"",reference:"",date_soumission:"",statut:"Soumise",notes:""});
+  return(<Modal onClose={onClose} title={preuve?"Modifier preuve":"Nouvelle Preuve"}><div className="form-grid">
+    <Field label="Ref Preuve *"><input className="input" value={f.preuve_id} onChange={e=>setF({...f,preuve_id:e.target.value})}/></Field>
+    <Field label="CAPA *"><select className="select" value={f.capa_uuid} onChange={e=>setF({...f,capa_uuid:e.target.value})}><option value="">—</option>{capas.map(c=><option key={c.id} value={c.id}>{c.capa_id}</option>)}</select></Field>
+    <Field label="Type"><Sel value={f.type_preuve} onChange={v=>setF({...f,type_preuve:v})} options={["Document","Photo","Rapport","Certificat","Autre"]}/></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={["Soumise","Validee","Rejetee"]}/></Field>
+    <Field label="Date soumission"><input type="date" className="input" value={f.date_soumission||""} onChange={e=>setF({...f,date_soumission:e.target.value})}/></Field>
+    <Field label="Reference"><input className="input" value={f.reference||""} onChange={e=>setF({...f,reference:e.target.value})}/></Field>
+    <Field label="Description" span><textarea className="textarea" value={f.description||""} onChange={e=>setF({...f,description:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{preuve?"Enregistrer":"Creer"}</button></Modal>)
+}
 
-// ============================================================
-// FORMS - AGREMENT / AUTORISATION / RENOUVELLEMENT
-// ============================================================
-function AgrementForm({agrement,audits,onClose,onSave}){const[f,setF]=useState(agrement||{agrement_id:"",entite:"",type_agrement:"ATO",domaine:"PEL",numero_agrement:"",date_delivrance:"",date_expiration:"",statut:"Actif",autorite_delivrance:"DGAC",notes:"",audit_uuid:""});return(<Modal onClose={onClose} title={agrement?`Modifier ${agrement.agrement_id}`:"Nouvel Agrément"} width={580}><div className="form-grid">
-  <Field label="ID Agrément *"><input className="input" value={f.agrement_id} onChange={e=>setF({...f,agrement_id:e.target.value})} placeholder="AGR-2026-001"/></Field>
-  <Field label="Type"><Sel value={f.type_agrement} onChange={v=>setF({...f,type_agrement:v})} options={TYPES_AGREMENT}/></Field>
-  <Field label="Entité *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})} placeholder="Silver Wings Training Center"/></Field>
-  <Field label="Numéro agrément"><input className="input" value={f.numero_agrement||""} onChange={e=>setF({...f,numero_agrement:e.target.value})} placeholder="TN-ATO-2026-001"/></Field>
-  <Field label="Domaine"><Sel value={f.domaine||"PEL"} onChange={v=>setF({...f,domaine:v})} options={DOMAINES}/></Field>
-  <Field label="Date délivrance"><input type="date" className="input" value={f.date_delivrance||""} onChange={e=>setF({...f,date_delivrance:e.target.value})}/></Field>
-  <Field label="Date expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>
-  <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AGREMENT}/></Field>
-  <Field label="Autorité"><input className="input" value={f.autorite_delivrance||""} onChange={e=>setF({...f,autorite_delivrance:e.target.value})}/></Field>
-  <Field label="Audit lié"><select className="select" value={f.audit_uuid||""} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">— Aucun —</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field>
-  <Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field>
-</div><button className="btn btn-teal btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{agrement?"Enregistrer":"Créer"}</button></Modal>)}
-
-function AutorisationForm({autorisation,agrements,onClose,onSave}){const[f,setF]=useState(autorisation||{autorisation_id:"",type_autorisation:"Autre",beneficiaire:"",agrement_uuid:"",date_delivrance:"",date_expiration:"",statut:"Accordée",conditions:"",reference_regl:"",notes:""});return(<Modal onClose={onClose} title={autorisation?`Modifier ${autorisation.autorisation_id}`:"Nouvelle Autorisation"} width={580}><div className="form-grid">
-  <Field label="ID Autorisation *"><input className="input" value={f.autorisation_id} onChange={e=>setF({...f,autorisation_id:e.target.value})} placeholder="AUT-2026-001"/></Field>
-  <Field label="Type"><Sel value={f.type_autorisation} onChange={v=>setF({...f,type_autorisation:v})} options={TYPES_AUTORISATION}/></Field>
-  <Field label="Bénéficiaire *" span><input className="input" value={f.beneficiaire} onChange={e=>setF({...f,beneficiaire:e.target.value})}/></Field>
-  <Field label="Agrément parent"><select className="select" value={f.agrement_uuid||""} onChange={e=>setF({...f,agrement_uuid:e.target.value})}><option value="">— Aucun —</option>{agrements.map(a=><option key={a.id} value={a.id}>{a.agrement_id} — {a.entite}</option>)}</select></Field>
-  <Field label="Réf. réglementaire"><input className="input" value={f.reference_regl||""} onChange={e=>setF({...f,reference_regl:e.target.value})}/></Field>
-  <Field label="Date délivrance"><input type="date" className="input" value={f.date_delivrance||""} onChange={e=>setF({...f,date_delivrance:e.target.value})}/></Field>
-  <Field label="Date expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>
-  <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AUTORISATION}/></Field>
-  <Field label="Conditions" span><textarea className="textarea" value={f.conditions||""} onChange={e=>setF({...f,conditions:e.target.value})}/></Field>
-  <Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field>
-</div><button className="btn btn-pink btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{autorisation?"Enregistrer":"Créer"}</button></Modal>)}
-
-function RenouvForm({renouv,onClose,onSave,agrementId}){const[f,setF]=useState(renouv||{agrement_uuid:agrementId,date_renouvellement:new Date().toISOString().slice(0,10),ancienne_expiration:"",nouvelle_expiration:"",decision:"Renouvelé",reference_decision:"",notes:""});return(<Modal onClose={onClose} title="Ajouter un renouvellement" width={480}><div className="form-grid">
-  <Field label="Date renouvellement"><input type="date" className="input" value={f.date_renouvellement} onChange={e=>setF({...f,date_renouvellement:e.target.value})}/></Field>
-  <Field label="Décision"><Sel value={f.decision} onChange={v=>setF({...f,decision:v})} options={DECISIONS_RENOUV}/></Field>
-  <Field label="Ancienne expiration"><input type="date" className="input" value={f.ancienne_expiration||""} onChange={e=>setF({...f,ancienne_expiration:e.target.value})}/></Field>
-  <Field label="Nouvelle expiration"><input type="date" className="input" value={f.nouvelle_expiration||""} onChange={e=>setF({...f,nouvelle_expiration:e.target.value})}/></Field>
-  <Field label="Réf. décision" span><input className="input" value={f.reference_decision||""} onChange={e=>setF({...f,reference_decision:e.target.value})} placeholder="Décision N°..."/></Field>
-  <Field label="Notes" span><textarea className="textarea" value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></Field>
-</div><button className="btn btn-teal btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>Enregistrer</button></Modal>)}
-
-// ============================================================
-// MOBILE CARDS
-// ============================================================
-function MC_Audit({a,findings,onClick,onDel}){const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{a.entite}</div><div className="mobile-card-id mono">{a.audit_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#A78BFA">{a.domaine}</Badge><Tag label={a.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{a.date_debut||"—"}</span><span style={{fontSize:12,color:'var(--orange)'}}>{op}/{af.length}</span></div></div>)}
-function MC_Finding({f,audits,onClick,onDel}){const today=new Date().toISOString().slice(0,10);const au=audits.find(a=>a.id===f.audit_uuid);const ov=f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;return(<div className="mobile-card" onClick={onClick} style={{borderLeft:ov?'3px solid var(--red)':'3px solid transparent'}}><div className="mobile-card-header"><div><div className="mobile-card-title">{f.titre}</div><div className="mobile-card-id mono">{f.finding_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color={XC[f.classement]}>{f.classement}</Badge><Badge color={CC[f.criticite]}>{f.criticite}</Badge><Tag label={f.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:ov?'var(--red)':'var(--dim)'}}>{f.echeance||"—"}</span></div></div>)}
-function MC_Capa({c,findings,onClick,onDel}){const fi=findings.find(f=>f.id===c.finding_uuid);return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{c.action_corrective?.slice(0,50)||"—"}</div><div className="mobile-card-id mono">{c.action_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Tag label={c.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{c.responsable||"—"}</span><span className="mono" style={{color:'var(--accent)',fontWeight:700}}>{c.avancement}%</span></div></div>)}
-function MC_Preuve({p,findings,onClick,onDel}){const fi=findings.find(f=>f.id===p.finding_uuid);return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{fi?.titre?.slice(0,40)||"—"}</div><div className="mobile-card-id mono">{p.evidence_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#22D3EE">{p.type_preuve}</Badge><Tag label={p.statut}/></div></div>)}
-function MC_Agrement({a,onClick,onDel}){return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{a.entite}</div><div className="mobile-card-id mono">{a.agrement_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#14B8A6">{a.type_agrement}</Badge><Tag label={a.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{a.numero_agrement||"—"}</span><ExpiryBadge date={a.date_expiration}/></div></div>)}
-function MC_Autorisation({a,agrements,onClick,onDel}){const ag=agrements.find(g=>g.id===a.agrement_uuid);return(<div className="mobile-card" onClick={onClick}><div className="mobile-card-header"><div><div className="mobile-card-title">{a.beneficiaire}</div><div className="mobile-card-id mono">{a.autorisation_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();onDel()}}>🗑</button></div><div className="mobile-card-meta"><Badge color="#EC4899">{a.type_autorisation}</Badge><Tag label={a.statut}/></div><div className="mobile-card-footer"><span style={{fontSize:11,color:'var(--dim)'}}>{ag?.entite||"—"}</span><ExpiryBadge date={a.date_expiration}/></div></div>)}
-
-// ============================================================
-// TABLE VIEWS - AUDIT / FINDING / CAPA / PREUVE
-// ============================================================
-function AuditsView({api,audits,findings,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[se,setSe]=useState("");const[del,setDel]=useState(null);const fl=audits.filter(a=>{if(fil!=="Tous"&&a.statut!==fil)return false;if(se&&!a.entite.toLowerCase().includes(se.toLowerCase())&&!a.audit_id.toLowerCase().includes(se.toLowerCase()))return false;return true});const save=async(d)=>{try{if(ed)await api.update("audits",ed.id,d);else await api.insert("audits",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("audits",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><input className="input" value={se} onChange={e=>setSe(e.target.value)} placeholder="Rechercher..." style={{width:220,maxWidth:'100%'}}/><div className="filter-group">{["Tous",...STATUTS_AUDIT].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-primary" onClick={()=>{setEd(null);setSf(true)}}>+ Audit</button></div><div className="table-container desktop-only">{fl.map(a=>{const af=findings.filter(f=>f.audit_uuid===a.id);const op=af.filter(f=>f.statut!=="Clôturé").length;return(<div key={a.id} className="table-row" style={{gridTemplateColumns:'100px 1fr 70px 80px 100px 60px 36px'}} onClick={()=>{setEd(a);setSf(true)}}><span className="mono" style={{fontSize:11,color:'var(--dim)'}}>{a.audit_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:'var(--dim)'}}>{a.equipe} • {a.date_debut||"—"}</div></div><Badge color="#A78BFA">{a.domaine}</Badge><span style={{fontSize:11,color:'var(--muted)'}}>{a.type_audit}</span><Tag label={a.statut}/><span style={{fontSize:12}}><span style={{color:'var(--orange)'}}>{op}</span><span style={{color:'var(--dim)'}}>/{af.length}</span></span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucun audit"/>}</div><div className="mobile-only">{fl.map(a=><MC_Audit key={a.id} a={a} findings={findings} onClick={()=>{setEd(a);setSf(true)}} onDel={()=>setDel(a)}/>)}{fl.length===0&&<Empty text="Aucun audit"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--accent)"/>{sf&&<AuditForm audit={ed} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.audit_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
-function FindingsView({api,audits,findings,preuves,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[cf,setCf]=useState("Tous");const[del,setDel]=useState(null);const today=new Date().toISOString().slice(0,10);const fl=findings.filter(f=>{if(fil==="Retard")return f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;if(fil==="Bloq.")return f.criticite==="Bloquant"&&f.statut!=="Clôturé";if(fil==="Prêts")return f.statut==="Vérification"&&preuves.filter(p=>p.finding_uuid===f.id&&p.statut==="Acceptée").length>=1;if(fil!=="Tous"&&f.statut!==fil)return false;if(cf!=="Tous"&&f.criticite!==cf)return false;return true});const save=async(d)=>{try{if(ed)await api.update("findings",ed.id,d);else await api.insert("findings",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("findings",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><div className="filter-group">{["Tous","Ouvert","En cours","Vérification","Clôturé","Retard","Bloq.","Prêts"].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><select className="select" style={{width:100,fontSize:11}} value={cf} onChange={e=>setCf(e.target.value)}><option value="Tous">Toutes</option>{CRITICITES.map(c=><option key={c} value={c}>{c}</option>)}</select><div className="spacer"/><button className="btn btn-orange" onClick={()=>{setEd(null);setSf(true)}}>+ Écart</button></div><div className="table-container desktop-only">{fl.map(f=>{const au=audits.find(a=>a.id===f.audit_uuid);const ov=f.statut!=="Clôturé"&&f.echeance&&f.echeance<today;return(<div key={f.id} className="table-row" style={{gridTemplateColumns:'120px 1fr 50px 70px 95px 80px 36px',borderLeft:ov?'3px solid var(--red)':'3px solid transparent'}} onClick={()=>{setEd(f);setSf(true)}}><span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{f.finding_id}</span><div><div style={{fontSize:13,fontWeight:600}}>{f.titre}</div><div style={{fontSize:11,color:'var(--dim)'}}>{au?.entite||"—"}</div></div><Badge color={XC[f.classement]}>{f.classement}</Badge><Badge color={CC[f.criticite]}>{f.criticite}</Badge><Tag label={f.statut}/><span style={{fontSize:11,color:ov?'var(--red)':'var(--dim)'}}>{f.echeance||"—"}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(f)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucun écart"/>}</div><div className="mobile-only">{fl.map(f=><MC_Finding key={f.id} f={f} audits={audits} onClick={()=>{setEd(f);setSf(true)}} onDel={()=>setDel(f)}/>)}{fl.length===0&&<Empty text="Aucun écart"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--orange)"/>{sf&&<FindingForm finding={ed} audits={audits} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.finding_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
-function CapaView({api,findings,capas,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[vw,setVw]=useState("list");const[del,setDel]=useState(null);const save=async(d)=>{try{if(ed)await api.update("capa",ed.id,d);else await api.insert("capa",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("capa",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};const kc=["Brouillon","Soumise","Acceptée","En cours","Réalisée","Vérifiée efficace"];return(<div><div className="filters"><div className="filter-group"><button className={`filter-btn ${vw==="list"?'active':''}`} onClick={()=>setVw("list")}>Liste</button><button className={`filter-btn ${vw==="kanban"?'active':''}`} onClick={()=>setVw("kanban")}>Kanban</button></div><div className="spacer"/><button className="btn btn-green" onClick={()=>{setEd(null);setSf(true)}}>+ Action</button></div>{vw==="kanban"?(<div className="kanban">{kc.map(col=>(<div key={col} className="kanban-col"><div className="kanban-title" style={{color:SC[col]||'var(--muted)'}}>{col} ({capas.filter(c=>c.statut===col).length})</div>{capas.filter(c=>c.statut===col).map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="kanban-card" onClick={()=>{setEd(c);setSf(true)}}><div className="mono" style={{fontSize:10,color:'var(--dim)'}}>{c.action_id}</div><div style={{fontSize:12,fontWeight:500,marginTop:4}}>{fi?.titre||"—"}</div><div style={{marginTop:8,display:'flex',justifyContent:'space-between'}}><span style={{fontSize:11,color:'var(--muted)'}}>{c.responsable||"—"}</span><span className="mono" style={{fontSize:11,color:'var(--accent)',fontWeight:700}}>{c.avancement}%</span></div></div>)})}</div>))}</div>):(<React.Fragment><div className="table-container desktop-only">{capas.map(c=>{const fi=findings.find(f=>f.id===c.finding_uuid);return(<div key={c.id} className="table-row" style={{gridTemplateColumns:'110px 1fr 90px 100px 50px 36px'}} onClick={()=>{setEd(c);setSf(true)}}><span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{c.action_id}</span><div><div style={{fontSize:13,fontWeight:500}}>{c.action_corrective?.slice(0,55)||"—"}</div><div style={{fontSize:11,color:'var(--dim)'}}>{fi?.finding_id} — {fi?.titre?.slice(0,35)||"—"}</div></div><span style={{fontSize:11,color:'var(--muted)'}}>{c.responsable||"—"}</span><Tag label={c.statut}/><span className="mono" style={{fontSize:12,color:'var(--accent)'}}>{c.avancement}%</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(c)}}>🗑</button></div>)})}{capas.length===0&&<Empty text="Aucune action"/>}</div><div className="mobile-only">{capas.map(c=><MC_Capa key={c.id} c={c} findings={findings} onClick={()=>{setEd(c);setSf(true)}} onDel={()=>setDel(c)}/>)}{capas.length===0&&<Empty text="Aucune action"/>}</div></React.Fragment>)}<FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--green)"/>{sf&&<CapaForm capa={ed} findings={findings} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.action_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
-function PreuvesView({api,findings,capas,preuves,reload}){const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[del,setDel]=useState(null);const fl=preuves.filter(p=>fil==="Tous"||p.statut===fil);const save=async(d)=>{try{if(ed)await api.update("preuves",ed.id,d);else await api.insert("preuves",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};const rm=async()=>{if(del){try{await api.remove("preuves",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};return(<div><div className="filters"><div className="filter-group">{["Tous",...STATUTS_PREUVE].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-purple" onClick={()=>{setEd(null);setSf(true)}}>+ Preuve</button></div><div className="table-container desktop-only">{fl.map(p=>{const fi=findings.find(f=>f.id===p.finding_uuid);return(<div key={p.id} className="table-row" style={{gridTemplateColumns:'130px 1fr 90px 60px 75px 75px 36px'}} onClick={()=>{setEd(p);setSf(true)}}><span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{p.evidence_id}</span><div style={{fontSize:12}}>{fi?.finding_id||"—"} — {fi?.titre?.slice(0,40)||"—"}</div><Badge color="#22D3EE">{p.type_preuve}</Badge><span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{p.version}</span><Tag label={p.statut}/><span style={{fontSize:11,color:'var(--dim)'}}>{p.date_preuve||"—"}</span><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(p)}}>🗑</button></div>)})}{fl.length===0&&<Empty text="Aucune preuve"/>}</div><div className="mobile-only">{fl.map(p=><MC_Preuve key={p.id} p={p} findings={findings} onClick={()=>{setEd(p);setSf(true)}} onDel={()=>setDel(p)}/>)}{fl.length===0&&<Empty text="Aucune preuve"/>}</div><FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--purple)"/>{sf&&<PreuveForm preuve={ed} findings={findings} capas={capas} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}{del&&<ConfirmDelete item={del.evidence_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}</div>)}
-
-// ============================================================
-// TABLE VIEWS - AGREMENTS
-// ============================================================
-function AgrementsView({api,audits,agrements,renouvellements,reload}){
-  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[del,setDel]=useState(null);const[renouv,setRenouv]=useState(null);const[showRenouv,setShowRenouv]=useState(false);
-  const fl=agrements.filter(a=>fil==="Tous"||a.statut===fil||(fil==="Expire bientôt"&&a.statut==="Actif"&&daysUntil(a.date_expiration)!==null&&daysUntil(a.date_expiration)>=0&&daysUntil(a.date_expiration)<=90));
-  const save=async(d)=>{try{if(ed)await api.update("agrements",ed.id,d);else await api.insert("agrements",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
-  const rm=async()=>{if(del){try{await api.remove("agrements",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
-  const saveRenouv=async(d)=>{try{await api.insert("renouvellements",d);if(d.nouvelle_expiration&&renouv){await api.update("agrements",renouv,{date_expiration:d.nouvelle_expiration})}setShowRenouv(false);setRenouv(null);reload()}catch(e){alert(e.message)}};
+/* ===== AUDITS VIEW ===== */
+function AuditsView({api,audits,findings,reload}){
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);const[fil,setFil]=useState("Tous");
+  const fl=audits.filter(a=>fil==="Tous"||a.statut===fil);
+  const save=async(d)=>{try{if(ed)await api.update("audits",ed.id,d);else await api.insert("audits",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
+  const rm=async()=>{if(del){try{await api.remove("audits",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
   return(<div>
-    <div className="filters"><div className="filter-group">{["Tous",...STATUTS_AGREMENT,"Expire bientôt"].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-teal" onClick={()=>{setEd(null);setSf(true)}}>+ Agrément</button></div>
-    <div className="table-container desktop-only">{fl.map(a=>{const rn=renouvellements.filter(r=>r.agrement_uuid===a.id);return(<div key={a.id} className="table-row" style={{gridTemplateColumns:'100px 1fr 65px 70px 85px 100px 65px 36px'}} onClick={()=>{setEd(a);setSf(true)}}>
-      <span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{a.agrement_id}</span>
-      <div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:'var(--dim)'}}>{a.numero_agrement||"—"}</div></div>
-      <Badge color="#14B8A6">{a.type_agrement}</Badge>
-      <Badge color="#A78BFA">{a.domaine}</Badge>
-      <Tag label={a.statut}/>
-      <ExpiryBadge date={a.date_expiration}/>
-      <button className="btn-outline btn-sm" onClick={e=>{e.stopPropagation();setRenouv(a.id);setShowRenouv(true)}} style={{fontSize:10,padding:'3px 8px'}}>🔄 {rn.length}</button>
-      <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>🗑</button>
-    </div>)})}{fl.length===0&&<Empty text="Aucun agrément"/>}</div>
-    <div className="mobile-only">{fl.map(a=><MC_Agrement key={a.id} a={a} onClick={()=>{setEd(a);setSf(true)}} onDel={()=>setDel(a)}/>)}{fl.length===0&&<Empty text="Aucun agrément"/>}</div>
-    <FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--teal)"/>
-    {sf&&<AgrementForm agrement={ed} audits={audits} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
-    {del&&<ConfirmDelete item={del.agrement_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
-    {showRenouv&&<RenouvForm agrementId={renouv} onClose={()=>{setShowRenouv(false);setRenouv(null)}} onSave={saveRenouv}/>}
+    <div className="filters"><div className="filter-group">{["Tous","Planifie","En cours","Termine","Cloture"].map(s=><button key={s} className={"filter-btn "+(fil===s?"active":"")} onClick={()=>setFil(s)}>{s}</button>)}</div><div className="spacer"/><button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ Audit</button></div>
+    <div className="table-container desktop-only">
+      {fl.map(a=>{const nf=findings.filter(f=>f.audit_uuid===a.id).length;return(
+        <div key={a.id} className="table-row" style={{gridTemplateColumns:"80px 1fr 60px 80px 70px 36px"}} onClick={()=>{setEd(a);setSf(true)}}>
+          <span className="mono" style={{fontSize:10,color:"var(--dim)"}}>{a.audit_id}</span>
+          <div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:"var(--dim)"}}>{a.responsable||"—"} — {a.date_debut||"—"}</div></div>
+          <Badge color="var(--cyan)">{nf} ec.</Badge><Tag label={a.statut}/><Badge color={SC[a.domaine]||"var(--gold)"}>{a.domaine}</Badge>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>&#128465;</button>
+        </div>)})}
+      {fl.length===0&&<Empty text="Aucun audit"/>}
+    </div>
+    <div className="mobile-only">{fl.map(a=>{const nf=findings.filter(f=>f.audit_uuid===a.id).length;return(
+      <div key={a.id} className="mobile-card" onClick={()=>{setEd(a);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{a.entite}</div><div className="mobile-card-id">{a.audit_id}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>&#128465;</button></div>
+        <div className="mobile-card-meta"><Tag label={a.statut}/><Badge color="var(--cyan)">{nf} ecarts</Badge><Badge color="var(--gold)">{a.domaine}</Badge></div>
+        <div className="mobile-card-footer"><span style={{fontSize:11,color:"var(--dim)"}}>{a.responsable||"—"}</span><span style={{fontSize:11,color:"var(--dim)"}}>{a.date_debut||"—"}</span></div>
+      </div>)})}{fl.length===0&&<Empty text="Aucun audit"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
+    {sf&&<AuditForm audit={ed} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
+    {del&&<ConfirmDelete item={del.audit_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
   </div>)
 }
 
-// ============================================================
-// TABLE VIEWS - AUTORISATIONS
-// ============================================================
+/* ===== FINDINGS VIEW ===== */
+function FindingsView({api,audits,findings,reload}){
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);const[fil,setFil]=useState("Tous");
+  const fl=findings.filter(f=>fil==="Tous"||f.classification===fil||f.statut===fil);
+  const save=async(d)=>{try{if(ed)await api.update("findings",ed.id,d);else await api.insert("findings",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
+  const rm=async()=>{if(del){try{await api.remove("findings",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
+  return(<div>
+    <div className="filters"><div className="filter-group">{["Tous","Ouvert","En traitement","Cloture"].map(s=><button key={s} className={"filter-btn "+(fil===s?"active":"")} onClick={()=>setFil(s)}>{s}</button>)}</div><div className="filter-group">{CLASSIFICATIONS.map(c=><button key={c} className={"filter-btn "+(fil===c?"active":"")} onClick={()=>setFil(fil===c?"Tous":c)}>{c}</button>)}</div><div className="spacer"/><button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ Ecart</button></div>
+    <div className="table-container desktop-only">
+      {fl.map(f=>{const a=audits.find(x=>x.id===f.audit_uuid);return(
+        <div key={f.id} className="table-row" style={{gridTemplateColumns:"70px 1fr 50px 70px 70px 36px"}} onClick={()=>{setEd(f);setSf(true)}}>
+          <span className="mono" style={{fontSize:10,color:"var(--dim)"}}>{f.finding_id}</span>
+          <div><div style={{fontSize:13,fontWeight:500}}>{(f.description||"").slice(0,60)}</div><div style={{fontSize:11,color:"var(--dim)"}}>{a?a.entite:"—"} — {f.domaine}</div></div>
+          <Tag label={f.classification}/><Tag label={f.statut}/><span style={{fontSize:10,color:"var(--dim)"}}>{f.echeance||"—"}</span>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(f)}}>&#128465;</button>
+        </div>)})}
+      {fl.length===0&&<Empty text="Aucun ecart"/>}
+    </div>
+    <div className="mobile-only">{fl.map(f=>{const a=audits.find(x=>x.id===f.audit_uuid);return(
+      <div key={f.id} className="mobile-card" onClick={()=>{setEd(f);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{(f.description||"").slice(0,50)}</div><div className="mobile-card-id">{f.finding_id} — {a?a.entite:""}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(f)}}>&#128465;</button></div>
+        <div className="mobile-card-meta"><Tag label={f.classification}/><Tag label={f.statut}/><Badge color="var(--gold)">{f.domaine}</Badge></div>
+      </div>)})}{fl.length===0&&<Empty text="Aucun ecart"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
+    {sf&&<FindingForm finding={ed} audits={audits} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
+    {del&&<ConfirmDelete item={del.finding_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
+  </div>)
+}
+
+/* ===== CAPA VIEW ===== */
+function CAPAView({api,findings,capas,reload}){
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);const[fil,setFil]=useState("Tous");
+  const fl=capas.filter(c=>fil==="Tous"||c.statut===fil);
+  const save=async(d)=>{try{if(ed)await api.update("capa",ed.id,d);else await api.insert("capa",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
+  const rm=async()=>{if(del){try{await api.remove("capa",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
+  return(<div>
+    <div className="filters"><div className="filter-group">{["Tous","Brouillon","Soumise","Acceptee","En cours","Realisee","Verifiee","Cloturee"].map(s=><button key={s} className={"filter-btn "+(fil===s?"active":"")} onClick={()=>setFil(s)}>{s}</button>)}</div><div className="spacer"/><button className="btn btn-purple" onClick={()=>exportCAPARetardPDF(capas,findings)}>PDF Retards</button><button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ CAPA</button></div>
+    <div className="table-container desktop-only">
+      {fl.map(c=>{const f=findings.find(x=>x.id===c.finding_uuid);const retard=c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee";return(
+        <div key={c.id} className="table-row" style={{gridTemplateColumns:"70px 1fr 80px 80px 80px 36px",background:retard?"rgba(200,16,46,0.03)":"transparent"}} onClick={()=>{setEd(c);setSf(true)}}>
+          <span className="mono" style={{fontSize:10,color:"var(--dim)"}}>{c.capa_id}</span>
+          <div><div style={{fontSize:13,fontWeight:500}}>{(c.description||"").slice(0,50)}</div><div style={{fontSize:11,color:"var(--dim)"}}>{f?f.finding_id:"—"} — {c.responsable||"—"}</div></div>
+          <Tag label={c.statut}/><span style={{fontSize:11,color:retard?"var(--red-tn)":"var(--dim)"}}>{c.echeance||"—"}{retard?" !":""}</span><Badge color={c.type_action==="Corrective"?"var(--orange)":"var(--cyan)"}>{c.type_action}</Badge>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(c)}}>&#128465;</button>
+        </div>)})}
+      {fl.length===0&&<Empty text="Aucune CAPA"/>}
+    </div>
+    <div className="mobile-only">{fl.map(c=>{const f=findings.find(x=>x.id===c.finding_uuid);const retard=c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee";return(
+      <div key={c.id} className="mobile-card" style={{borderColor:retard?"rgba(200,16,46,0.2)":"var(--border)"}} onClick={()=>{setEd(c);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{c.capa_id}</div><div className="mobile-card-id">{(c.description||"").slice(0,40)}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(c)}}>&#128465;</button></div>
+        <div className="mobile-card-meta"><Tag label={c.statut}/><span style={{fontSize:11,color:retard?"var(--red-tn)":"var(--dim)"}}>{c.echeance||"—"}</span></div>
+      </div>)})}{fl.length===0&&<Empty text="Aucune CAPA"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
+    {sf&&<CAPAForm capa={ed} findings={findings} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
+    {del&&<ConfirmDelete item={del.capa_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
+  </div>)
+}
+
+/* ===== PREUVES VIEW ===== */
+function PreuvesView({api,capas,preuves,reload}){
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);
+  const save=async(d)=>{try{if(ed)await api.update("preuves",ed.id,d);else await api.insert("preuves",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
+  const rm=async()=>{if(del){try{await api.remove("preuves",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
+  return(<div>
+    <div className="filters"><div className="spacer"/><button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ Preuve</button></div>
+    <div className="table-container desktop-only">
+      {preuves.map(p=>{const c=capas.find(x=>x.id===p.capa_uuid);return(
+        <div key={p.id} className="table-row" style={{gridTemplateColumns:"70px 1fr 80px 80px 80px 36px"}} onClick={()=>{setEd(p);setSf(true)}}>
+          <span className="mono" style={{fontSize:10,color:"var(--dim)"}}>{p.preuve_id}</span>
+          <div><div style={{fontSize:13,fontWeight:500}}>{(p.description||"").slice(0,50)}</div><div style={{fontSize:11,color:"var(--dim)"}}>{c?c.capa_id:"—"}</div></div>
+          <Badge color="var(--gold)">{p.type_preuve}</Badge><Tag label={p.statut}/><span style={{fontSize:11,color:"var(--dim)"}}>{p.date_soumission||"—"}</span>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(p)}}>&#128465;</button>
+        </div>)})}
+      {preuves.length===0&&<Empty text="Aucune preuve"/>}
+    </div>
+    <div className="mobile-only">{preuves.map(p=>{const c=capas.find(x=>x.id===p.capa_uuid);return(
+      <div key={p.id} className="mobile-card" onClick={()=>{setEd(p);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{p.preuve_id}</div><div className="mobile-card-id">{(p.description||"").slice(0,40)}</div></div><Tag label={p.statut}/></div>
+        <div className="mobile-card-meta"><Badge color="var(--gold)">{p.type_preuve}</Badge><span style={{fontSize:11,color:"var(--dim)"}}>{c?c.capa_id:""}</span></div>
+      </div>)})}{preuves.length===0&&<Empty text="Aucune preuve"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
+    {sf&&<PreuveForm preuve={ed} capas={capas} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
+    {del&&<ConfirmDelete item={del.preuve_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
+  </div>)
+}
+
+/* ===== AGREMENTS FORM ===== */
+function AgrementForm({agrement,audits,onClose,onSave}){
+  const[f,setF]=useState(agrement||{entite:"",activite:ACTIVITES[0],type_agrement:SOUS_TYPES[ACTIVITES[0]][0],numero:"",date_delivrance:"",date_expiration:"",statut:"Actif",audit_uuid:"",delai_audit_mois:3,observations:""});
+  const stypes=SOUS_TYPES[f.activite]||[];
+  return(<Modal onClose={onClose} title={agrement?"Modifier agrement":"Nouvel Agrement"}><div className="form-grid">
+    <Field label="Entite *" span><input className="input" value={f.entite} onChange={e=>setF({...f,entite:e.target.value})} placeholder="Nom de l'entite"/></Field>
+    <Field label="Activite"><select className="select" value={f.activite} onChange={e=>{const v=e.target.value;setF({...f,activite:v,type_agrement:(SOUS_TYPES[v]||[])[0]||""})}}>{ACTIVITES.map(a=><option key={a} value={a}>{a}</option>)}</select></Field>
+    <Field label="Type"><select className="select" value={f.type_agrement} onChange={e=>setF({...f,type_agrement:e.target.value})}>{stypes.map(s=><option key={s} value={s}>{s}</option>)}</select></Field>
+    <Field label="Numero"><input className="input" value={f.numero||""} onChange={e=>setF({...f,numero:e.target.value})}/></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AGREMENT}/></Field>
+    <Field label="Date delivrance"><input type="date" className="input" value={f.date_delivrance||""} onChange={e=>setF({...f,date_delivrance:e.target.value})}/></Field>
+    <Field label="Date expiration"><input type="date" className="input" value={f.date_expiration||""} onChange={e=>setF({...f,date_expiration:e.target.value})}/></Field>
+    <Field label="Delai audit avant exp. (mois)"><input type="number" className="input" min="1" max="12" value={f.delai_audit_mois||3} onChange={e=>setF({...f,delai_audit_mois:parseInt(e.target.value)||3})}/></Field>
+    <Field label="Audit lie"><select className="select" value={f.audit_uuid||""} onChange={e=>setF({...f,audit_uuid:e.target.value})}><option value="">— Aucun —</option>{audits.map(a=><option key={a.id} value={a.id}>{a.audit_id} — {a.entite}</option>)}</select></Field>
+    <Field label="Observations" span><textarea className="textarea" value={f.observations||""} onChange={e=>setF({...f,observations:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{agrement?"Enregistrer":"Creer"}</button></Modal>)
+}
+
+/* ===== AUTORISATIONS FORM ===== */
+function AutorisationForm({autorisation,agrements,onClose,onSave}){
+  const[f,setF]=useState(autorisation||{type_autorisation:"",beneficiaire:"",agrement_uuid:"",date_delivrance:"",date_validite:"",statut:"Accordee",reference:"",observations:""});
+  return(<Modal onClose={onClose} title={autorisation?"Modifier autorisation":"Nouvelle Autorisation"}><div className="form-grid">
+    <Field label="Type *"><input className="input" value={f.type_autorisation} onChange={e=>setF({...f,type_autorisation:e.target.value})} placeholder="Type d'autorisation"/></Field>
+    <Field label="Beneficiaire *"><input className="input" value={f.beneficiaire} onChange={e=>setF({...f,beneficiaire:e.target.value})}/></Field>
+    <Field label="Agrement lie"><select className="select" value={f.agrement_uuid||""} onChange={e=>setF({...f,agrement_uuid:e.target.value})}><option value="">— Independante —</option>{agrements.map(a=><option key={a.id} value={a.id}>{a.entite} — {a.numero}</option>)}</select></Field>
+    <Field label="Statut"><Sel value={f.statut} onChange={v=>setF({...f,statut:v})} options={STATUTS_AUTORISATION}/></Field>
+    <Field label="Date delivrance"><input type="date" className="input" value={f.date_delivrance||""} onChange={e=>setF({...f,date_delivrance:e.target.value})}/></Field>
+    <Field label="Date validite"><input type="date" className="input" value={f.date_validite||""} onChange={e=>setF({...f,date_validite:e.target.value})}/></Field>
+    <Field label="Reference"><input className="input" value={f.reference||""} onChange={e=>setF({...f,reference:e.target.value})}/></Field>
+    <Field label="Observations" span><textarea className="textarea" value={f.observations||""} onChange={e=>setF({...f,observations:e.target.value})}/></Field>
+  </div><button className="btn btn-gold btn-full" style={{marginTop:16}} onClick={()=>onSave(f)}>{autorisation?"Enregistrer":"Creer"}</button></Modal>)
+}
+
+/* ===== AGREMENTS VIEW ===== */
+function AgrementsView({api,agrements,autorisations,audits,reload}){
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);const[actF,setActF]=useState("Tous");
+  const fl=agrements.filter(a=>actF==="Tous"||a.activite===actF);
+  const save=async(d)=>{try{if(ed)await api.update("agrements",ed.id,d);else await api.insert("agrements",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
+  const rm=async()=>{if(del){try{await api.remove("agrements",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
+  return(<div>
+    <div className="filters">
+      <div className="filter-group">{["Tous",...ACTIVITES].map(a=><button key={a} className={"filter-btn "+(actF===a?"active":"")} onClick={()=>setActF(a)}>{a}{a!=="Tous"&&<span style={{marginLeft:4,opacity:0.6}}>({agrements.filter(x=>x.activite===a).length})</span>}</button>)}</div>
+      <div className="spacer"/>
+      <button className="btn btn-cyan" onClick={()=>exportAgrementsPDF(agrements)}>PDF Liste</button>
+      <button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ Agrement</button>
+    </div>
+    <div className="table-container desktop-only">
+      {fl.map(a=>{const d=daysUntil(a.date_expiration);const expiring=d>=0&&d<=30;const expired=d<0;const nAut=autorisations.filter(x=>x.agrement_uuid===a.id).length;return(
+        <div key={a.id} className="table-row" style={{gridTemplateColumns:"1fr 90px 80px 90px 80px 60px 36px",background:expired?"rgba(200,16,46,0.03)":expiring?"rgba(243,156,18,0.03)":"transparent"}} onClick={()=>{setEd(a);setSf(true)}}>
+          <div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:"var(--dim)"}}>{a.numero||"—"}</div></div>
+          <Badge color="var(--gold)">{a.type_agrement}</Badge>
+          <Tag label={a.statut}/>
+          <span style={{fontSize:11,color:expired?"var(--red-tn)":expiring?"var(--orange)":"var(--dim)"}}>{a.date_expiration||"—"}{expired?" (expire)":expiring?" ("+d+"j)":""}</span>
+          <Badge color="var(--cyan)">{nAut} aut.</Badge>
+          <button className="btn btn-outline btn-sm" onClick={e=>{e.stopPropagation();exportAgrementFiche(a,autorisations)}}>PDF</button>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>&#128465;</button>
+        </div>)})}
+      {fl.length===0&&<Empty text="Aucun agrement"/>}
+    </div>
+    <div className="mobile-only">{fl.map(a=>{const d=daysUntil(a.date_expiration);const expiring=d>=0&&d<=30;const expired=d<0;return(
+      <div key={a.id} className="mobile-card" style={{borderColor:expired?"rgba(200,16,46,0.2)":expiring?"rgba(243,156,18,0.2)":"var(--border)"}} onClick={()=>{setEd(a);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{a.entite}</div><div className="mobile-card-id">{a.numero||"—"}</div></div><button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>&#128465;</button></div>
+        <div className="mobile-card-meta"><Badge color="var(--gold)">{a.type_agrement}</Badge><Tag label={a.statut}/></div>
+        <div className="mobile-card-footer"><span style={{fontSize:11,color:expired?"var(--red-tn)":expiring?"var(--orange)":"var(--dim)"}}>{a.date_expiration||"—"}</span></div>
+      </div>)})}{fl.length===0&&<Empty text="Aucun agrement"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
+    {sf&&<AgrementForm agrement={ed} audits={audits} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
+    {del&&<ConfirmDelete item={del.entite+" — "+del.numero} onConfirm={rm} onCancel={()=>setDel(null)}/>}
+  </div>)
+}
+
+/* ===== AUTORISATIONS VIEW ===== */
 function AutorisationsView({api,agrements,autorisations,reload}){
-  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[fil,setFil]=useState("Tous");const[del,setDel]=useState(null);
-  const fl=autorisations.filter(a=>fil==="Tous"||a.statut===fil);
+  const[sf,setSf]=useState(false);const[ed,setEd]=useState(null);const[del,setDel]=useState(null);
   const save=async(d)=>{try{if(ed)await api.update("autorisations",ed.id,d);else await api.insert("autorisations",d);setSf(false);setEd(null);reload()}catch(e){alert(e.message)}};
   const rm=async()=>{if(del){try{await api.remove("autorisations",del.id)}catch(e){alert(e.message)}setDel(null);reload()}};
   return(<div>
-    <div className="filters"><div className="filter-group">{["Tous",...STATUTS_AUTORISATION].map(s=>(<button key={s} className={`filter-btn ${fil===s?'active':''}`} onClick={()=>setFil(s)}>{s}</button>))}</div><div className="spacer"/><button className="btn btn-pink" onClick={()=>{setEd(null);setSf(true)}}>+ Autorisation</button></div>
-    <div className="table-container desktop-only">{fl.map(a=>{const ag=agrements.find(g=>g.id===a.agrement_uuid);return(<div key={a.id} className="table-row" style={{gridTemplateColumns:'110px 1fr 120px 100px 95px 90px 36px'}} onClick={()=>{setEd(a);setSf(true)}}>
-      <span className="mono" style={{fontSize:10,color:'var(--dim)'}}>{a.autorisation_id}</span>
-      <div><div style={{fontSize:13,fontWeight:600}}>{a.beneficiaire}</div><div style={{fontSize:11,color:'var(--dim)'}}>{ag?.entite||"—"} • {a.reference_regl||"—"}</div></div>
-      <Badge color="#EC4899">{a.type_autorisation}</Badge>
-      <Tag label={a.statut}/>
-      <ExpiryBadge date={a.date_expiration}/>
-      <span style={{fontSize:11,color:'var(--dim)'}}>{a.date_delivrance||"—"}</span>
-      <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>🗑</button>
-    </div>)})}{fl.length===0&&<Empty text="Aucune autorisation"/>}</div>
-    <div className="mobile-only">{fl.map(a=><MC_Autorisation key={a.id} a={a} agrements={agrements} onClick={()=>{setEd(a);setSf(true)}} onDel={()=>setDel(a)}/>)}{fl.length===0&&<Empty text="Aucune autorisation"/>}</div>
-    <FAB onClick={()=>{setEd(null);setSf(true)}} color="var(--pink)"/>
+    <div className="filters"><div className="spacer"/><button className="btn btn-gold" onClick={()=>{setEd(null);setSf(true)}}>+ Autorisation</button></div>
+    <div className="table-container desktop-only">
+      {autorisations.map(a=>{const ag=agrements.find(x=>x.id===a.agrement_uuid);return(
+        <div key={a.id} className="table-row" style={{gridTemplateColumns:"1fr 1fr 80px 80px 36px"}} onClick={()=>{setEd(a);setSf(true)}}>
+          <div><div style={{fontSize:13,fontWeight:600}}>{a.type_autorisation}</div><div style={{fontSize:11,color:"var(--dim)"}}>{a.beneficiaire}</div></div>
+          <div style={{fontSize:11,color:"var(--dim)"}}>{ag?ag.entite+" ("+ag.numero+")":"Independante"}</div>
+          <Tag label={a.statut}/><span style={{fontSize:11,color:"var(--dim)"}}>{a.date_validite||"—"}</span>
+          <button className="btn-icon" onClick={e=>{e.stopPropagation();setDel(a)}}>&#128465;</button>
+        </div>)})}
+      {autorisations.length===0&&<Empty text="Aucune autorisation"/>}
+    </div>
+    <div className="mobile-only">{autorisations.map(a=>{const ag=agrements.find(x=>x.id===a.agrement_uuid);return(
+      <div key={a.id} className="mobile-card" onClick={()=>{setEd(a);setSf(true)}}>
+        <div className="mobile-card-header"><div><div className="mobile-card-title">{a.type_autorisation}</div><div className="mobile-card-id">{a.beneficiaire}</div></div><Tag label={a.statut}/></div>
+        <div className="mobile-card-footer"><span style={{fontSize:11,color:"var(--dim)"}}>{ag?ag.entite:"Independante"}</span><span style={{fontSize:11,color:"var(--dim)"}}>{a.date_validite||"—"}</span></div>
+      </div>)})}{autorisations.length===0&&<Empty text="Aucune autorisation"/>}</div>
+    <FAB onClick={()=>{setEd(null);setSf(true)}}/>
     {sf&&<AutorisationForm autorisation={ed} agrements={agrements} onClose={()=>{setSf(false);setEd(null)}} onSave={save}/>}
-    {del&&<ConfirmDelete item={del.autorisation_id} onConfirm={rm} onCancel={()=>setDel(null)}/>}
+    {del&&<ConfirmDelete item={del.type_autorisation} onConfirm={rm} onCancel={()=>setDel(null)}/>}
   </div>)
 }
 
-// ============================================================
-// MAIN APP
-// ============================================================
-function App(){
-  const[user,setUser]=useState(null);const[token,setToken]=useState(null);const[api,setApi]=useState(null);const[tab,setTab]=useState("dashboard");
-  const[audits,setAudits]=useState([]);const[findings,setFindings]=useState([]);const[capas,setCapas]=useState([]);const[preuves,setPreuves]=useState([]);
-  const[agrements,setAgrements]=useState([]);const[autorisations,setAutorisations]=useState([]);const[renouvellements,setRenouvellements]=useState([]);
-  const[loading,setLoading]=useState(false);const[error,setError]=useState("");const[cs,setCs]=useState(true);
+/* ===== PLANNING VIEW ===== */
+function PlanningView({agrements,audits}){
+  const[view,setView]=useState("list");
+  const[month,setMonth]=useState(new Date().getMonth());
+  const[year,setYear]=useState(new Date().getFullYear());
+  const MOIS=["Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"];
 
-  const loadAll=useCallback(async(ar)=>{const a=ar||api;if(!a)return;setLoading(true);setError("");try{const[au,fi,ca,pr,ag,at,rn]=await Promise.all([a.select("audits","order=created_at.desc"),a.select("findings","order=created_at.desc"),a.select("capa","order=created_at.desc"),a.select("preuves","order=created_at.desc"),a.select("agrements","order=created_at.desc"),a.select("autorisations","order=created_at.desc"),a.select("renouvellements","order=date_renouvellement.desc")]);setAudits(au);setFindings(fi);setCapas(ca);setPreuves(pr);setAgrements(ag);setAutorisations(at);setRenouvellements(rn)}catch(e){setError("Erreur: "+e.message)}setLoading(false)},[api]);
+  const planned=agrements.filter(a=>a.statut==="Actif"&&a.date_expiration).map(a=>{
+    const exp=new Date(a.date_expiration);
+    const delai=a.delai_audit_mois||3;
+    const auditDate=new Date(exp);auditDate.setMonth(auditDate.getMonth()-delai);
+    const linked=audits.find(x=>x.id===a.audit_uuid);
+    const d=daysUntil(auditDate.toISOString().slice(0,10));
+    let urgence="normal";if(d<0)urgence="retard";else if(d<=30)urgence="urgent";else if(d<=60)urgence="proche";
+    return{...a,auditDate:auditDate.toISOString().slice(0,10),delai:delai,linkedAudit:linked,daysUntilAudit:d,urgence:urgence};
+  }).sort((a,b)=>a.auditDate.localeCompare(b.auditDate));
+
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const firstDay=(new Date(year,month,1).getDay()+6)%7;
+  const calDays=[];
+  for(let i=0;i<firstDay;i++)calDays.push(null);
+  for(let d=1;d<=daysInMonth;d++)calDays.push(d);
+  const today=new Date();const isToday=(d)=>d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
+  const eventsForDay=(d)=>{const ds=year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");return planned.filter(p=>p.auditDate===ds)};
+
+  const prevMonth=()=>{if(month===0){setMonth(11);setYear(year-1)}else setMonth(month-1)};
+  const nextMonth=()=>{if(month===11){setMonth(0);setYear(year+1)}else setMonth(month+1)};
+
+  return(<div>
+    <div className="filters">
+      <div className="filter-group"><button className={"filter-btn "+(view==="list"?"active":"")} onClick={()=>setView("list")}>Liste</button><button className={"filter-btn "+(view==="cal"?"active":"")} onClick={()=>setView("cal")}>Calendrier</button></div>
+    </div>
+    <div className="kpi-grid">
+      <KPI label="Audits planifies" value={planned.length} color="var(--gold)"/>
+      <KPI label="En retard" value={planned.filter(p=>p.urgence==="retard").length} color="var(--red-tn)"/>
+      <KPI label="Urgent (30j)" value={planned.filter(p=>p.urgence==="urgent").length} color="var(--orange)"/>
+      <KPI label="A venir" value={planned.filter(p=>p.urgence==="normal"||p.urgence==="proche").length} color="var(--green)"/>
+    </div>
+
+    {view==="list"?(
+      <div className="table-container">
+        <div className="table-row" style={{gridTemplateColumns:"1fr 80px 80px 90px 80px",background:"rgba(189,165,107,0.04)",fontWeight:700,fontSize:10,color:"var(--gold)",textTransform:"uppercase",letterSpacing:1,cursor:"default"}}>
+          <span>Entite / Agrement</span><span>Type</span><span>Exp. agrement</span><span>Audit prevu</span><span>Statut</span>
+        </div>
+        {planned.map((p,i)=>{const uc=p.urgence==="retard"?"var(--red-tn)":p.urgence==="urgent"?"var(--orange)":p.urgence==="proche"?"var(--cyan)":"var(--green)";return(
+          <div key={i} className="table-row" style={{gridTemplateColumns:"1fr 80px 80px 90px 80px",background:p.urgence==="retard"?"rgba(200,16,46,0.03)":"transparent"}}>
+            <div><div style={{fontSize:13,fontWeight:600}}>{p.entite}</div><div style={{fontSize:11,color:"var(--dim)"}}>{p.numero} — Delai: {p.delai} mois</div></div>
+            <Badge color="var(--gold)">{p.type_agrement}</Badge>
+            <span style={{fontSize:11,color:"var(--dim)"}}>{p.date_expiration}</span>
+            <span className="mono" style={{fontSize:12,fontWeight:600,color:uc}}>{p.auditDate}</span>
+            <span style={{fontSize:11}}>
+              {p.linkedAudit?<Tag label={p.linkedAudit.statut}/>:<Badge color={uc}>{p.urgence==="retard"?"En retard":p.urgence==="urgent"?"Urgent":"A planifier"}</Badge>}
+            </span>
+          </div>)})}
+        {planned.length===0&&<Empty text="Aucun audit a planifier"/>}
+      </div>
+    ):(
+      <div className="card card-padded">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <button className="btn-icon" onClick={prevMonth} style={{fontSize:18}}>&#9664;</button>
+          <div style={{fontSize:16,fontWeight:700,fontFamily:"'Playfair Display',serif",color:"var(--gold-light)"}}>{MOIS[month]} {year}</div>
+          <button className="btn-icon" onClick={nextMonth} style={{fontSize:18}}>&#9654;</button>
+        </div>
+        <div className="cal-grid">
+          {["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(d=><div key={d} className="cal-head">{d}</div>)}
+          {calDays.map((d,i)=>{
+            if(d===null)return <div key={"e"+i} className="cal-day"/>;
+            const evts=eventsForDay(d);
+            const hasAlert=evts.some(e=>e.urgence==="retard"||e.urgence==="urgent");
+            return(<div key={i} className={"cal-day"+(evts.length>0?" has-event":"")+(isToday(d)?" today":"")+(hasAlert?" alert":"")} title={evts.map(e=>e.entite).join(", ")}>
+              {d}{evts.length>0&&<div style={{fontSize:7,marginTop:1}}>{evts.length} audit{evts.length>1?"s":""}</div>}
+            </div>)
+          })}
+        </div>
+        <div style={{marginTop:16}}>
+          {planned.filter(p=>{const d=new Date(p.auditDate);return d.getMonth()===month&&d.getFullYear()===year}).map((p,i)=>(
+            <div key={i} className="stat-row"><div><div style={{fontSize:13,fontWeight:600}}>{p.entite}</div><div style={{fontSize:11,color:"var(--dim)"}}>{p.type_agrement} — {p.auditDate}</div></div><Badge color={p.urgence==="retard"?"var(--red-tn)":p.urgence==="urgent"?"var(--orange)":"var(--green)"}>{p.urgence==="retard"?"Retard":p.urgence==="urgent"?"Urgent":"Prevu"}</Badge></div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>)
+}
+
+/* ===== ALERT POPUP ===== */
+function AlertPopup({agrements,capas,onClose}){
+  const expSoon=agrements.filter(a=>a.statut==="Actif"&&daysUntil(a.date_expiration)<=30&&daysUntil(a.date_expiration)>=0);
+  const expired=agrements.filter(a=>a.statut==="Actif"&&daysUntil(a.date_expiration)<0);
+  const capaRetard=capas.filter(c=>c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee");
+  const total=expSoon.length+expired.length+capaRetard.length;
+  if(total===0)return null;
+  return(<Modal onClose={onClose} title={"Alertes ("+total+")"} width={480}>
+    {expired.length>0&&<div style={{marginBottom:14}}><div style={{fontSize:12,fontWeight:700,color:"var(--red-tn)",marginBottom:6}}>AGREMENTS EXPIRES</div>{expired.map(a=><div key={a.id} className="alert-card"><div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:"var(--red-tn)"}}>{a.type_agrement} — expire depuis {Math.abs(daysUntil(a.date_expiration))}j</div></div></div>)}</div>}
+    {expSoon.length>0&&<div style={{marginBottom:14}}><div style={{fontSize:12,fontWeight:700,color:"var(--orange)",marginBottom:6}}>EXPIRENT DANS 30 JOURS</div>{expSoon.map(a=><div key={a.id} className="alert-card warn"><div><div style={{fontSize:13,fontWeight:600}}>{a.entite}</div><div style={{fontSize:11,color:"var(--orange)"}}>{a.type_agrement} — expire dans {daysUntil(a.date_expiration)}j ({a.date_expiration})</div></div></div>)}</div>}
+    {capaRetard.length>0&&<div><div style={{fontSize:12,fontWeight:700,color:"var(--red-tn)",marginBottom:6}}>CAPA EN RETARD</div>{capaRetard.slice(0,8).map(c=><div key={c.id} className="alert-card"><div><div style={{fontSize:13,fontWeight:600}}>CAPA {c.capa_id}</div><div style={{fontSize:11,color:"var(--red-tn)"}}>Echeance: {c.echeance}</div></div></div>)}</div>}
+    <button className="btn btn-outline btn-full" style={{marginTop:18}} onClick={onClose}>Fermer</button>
+  </Modal>)
+}
+
+/* ===== MAIN APP ===== */
+function App(){
+  const[user,setUser]=useState(null);const[token,setToken]=useState(null);const[api,setApi]=useState(null);
+  const[tab,setTab]=useState("dashboard");const[loading,setLoading]=useState(false);const[error,setError]=useState("");
+  const[cs,setCs]=useState(true);const[showAlerts,setShowAlerts]=useState(false);const[alertShown,setAlertShown]=useState(false);
+  const[audits,setAudits]=useState([]);const[findings,setFindings]=useState([]);const[capas,setCapas]=useState([]);const[preuves,setPreuves]=useState([]);
+  const[agrements,setAgrements]=useState([]);const[autorisations,setAutorisations]=useState([]);
+
+  const loadAll=useCallback(async(ar)=>{
+    const a=ar||api;if(!a)return;setLoading(true);setError("");
+    try{
+      const[au,fi,ca,pr,ag,at]=await Promise.all([
+        a.select("audits","order=created_at.desc"),a.select("findings","order=created_at.desc"),
+        a.select("capa","order=created_at.desc"),a.select("preuves","order=created_at.desc"),
+        a.select("agrements","order=entite.asc"),a.select("autorisations","order=created_at.desc")
+      ]);
+      setAudits(au);setFindings(fi);setCapas(ca);setPreuves(pr);setAgrements(ag);setAutorisations(at);
+      if(!alertShown){
+        const expN=ag.filter(x=>x.statut==="Actif"&&daysUntil(x.date_expiration)<=30);
+        const capR=ca.filter(c=>c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee");
+        if(expN.length+capR.length>0){setShowAlerts(true);setAlertShown(true)}
+      }
+    }catch(e){setError("Erreur: "+e.message)}
+    setLoading(false)
+  },[api,alertShown]);
 
   const handleLogin=(t,u)=>{const a=createApi(t);setToken(t);setUser(u);setApi(a);loadAll(a)};
-  const handleLogout=async()=>{try{if(token)await authApi.logout(token)}catch(e){}localStorage.removeItem("sb_token");localStorage.removeItem("sb_user_email");setUser(null);setToken(null);setApi(null)};
+  const handleLogout=async()=>{try{if(token)await authApi.logout(token)}catch(e){}localStorage.removeItem("audit_token");setUser(null);setToken(null);setApi(null)};
 
-  useEffect(()=>{const t=localStorage.getItem("sb_token");if(t){authApi.getUser(t).then(u=>{const a=createApi(t);setToken(t);setUser(u);setApi(a);loadAll(a);setCs(false)}).catch(()=>{localStorage.removeItem("sb_token");setCs(false)})}else setCs(false)},[]);
+  useEffect(()=>{
+    const t=localStorage.getItem("audit_token");
+    if(t){authApi.getUser(t).then(u=>{const a=createApi(t);setToken(t);setUser(u);setApi(a);loadAll(a);setCs(false)}).catch(()=>{localStorage.removeItem("audit_token");setCs(false)})}
+    else setCs(false)
+  },[]);
 
-  if(cs)return(<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)'}}><div style={{textAlign:'center'}}><div style={{fontSize:48,marginBottom:12}}>✈️</div><div style={{color:'var(--muted)',fontSize:14}}>Chargement...</div></div></div>);
+  if(cs)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"var(--bg)"}}><div style={{textAlign:"center"}}><div style={{fontSize:44,marginBottom:10}}>&#9992;</div><div style={{color:"var(--muted)",fontSize:13}}>Chargement...</div></div></div>;
   if(!user)return <LoginScreen onLogin={handleLogin}/>;
 
+  const expSoon=agrements.filter(a=>a.statut==="Actif"&&daysUntil(a.date_expiration)<=30);
+  const capaRetard=capas.filter(c=>c.echeance&&new Date(c.echeance)<new Date()&&c.statut!=="Verifiee"&&c.statut!=="Cloturee");
+  const totalAlerts=expSoon.length+capaRetard.length;
+
   const tabs=[
-    {id:"dashboard",label:"Accueil",icon:"📊",ml:"Accueil"},
-    {id:"audits",label:"Audits",icon:"📋",ml:"Audits",count:audits.filter(a=>a.statut!=="Clôturé").length},
-    {id:"findings",label:"Écarts",icon:"⚠️",ml:"Écarts",count:findings.filter(f=>f.statut!=="Clôturé").length},
-    {id:"capa",label:"CAPA",icon:"🔧",ml:"CAPA",count:capas.filter(c=>!["Vérifiée efficace","Rejetée"].includes(c.statut)).length},
-    {id:"preuves",label:"Preuves",icon:"📎",ml:"Preuves",count:preuves.filter(p=>p.statut==="Soumise").length},
-    {id:"agrements",label:"Agréments",icon:"🏛️",ml:"Agrém.",count:agrements.filter(a=>{const d=daysUntil(a.date_expiration);return a.statut==="Actif"&&d!==null&&d>=0&&d<=90}).length},
-    {id:"autorisations",label:"Autorisations",icon:"📄",ml:"Autoris.",count:autorisations.filter(a=>a.statut==="Accordée").length},
+    {id:"dashboard",label:"Accueil",ml:"Accueil",icon:"\u2302"},
+    {id:"audits",label:"Audits",ml:"Audits",icon:"\uD83D\uDD0D",count:audits.filter(a=>a.statut!=="Cloture").length},
+    {id:"findings",label:"Ecarts",ml:"Ecarts",icon:"\u26A0",count:findings.filter(f=>f.statut==="Ouvert").length},
+    {id:"capa",label:"CAPA",ml:"CAPA",icon:"\u2699",count:capaRetard.length},
+    {id:"preuves",label:"Preuves",ml:"Preuves",icon:"\uD83D\uDCCE"},
+    {id:"agrements",label:"Agrements",ml:"Agrem.",icon:"\uD83D\uDCC4",alert:expSoon.length},
+    {id:"autorisations",label:"Autorisations",ml:"Autor.",icon:"\u2714"},
+    {id:"planning",label:"Planning",ml:"Planning",icon:"\uD83D\uDCC5"}
   ];
 
   return(<div>
+    <div className="tn-stripe"/>
     <header className="header">
-      <div className="header-left"><div className="logo">✈</div><div><div className="header-title">DGAC — Plateforme de Surveillance</div><div className="header-sub">Direction Générale de l'Aviation Civile</div></div></div>
-      <div className="desktop-tabs">{tabs.map(t=>(<button key={t.id} className={`tab-btn ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}><span>{t.icon}</span> {t.label}{t.count>0&&<span className="tab-count">{t.count}</span>}</button>))}</div>
-      <div className="header-right"><div className="user-badge"><div className="user-dot"/>{user.email}</div><button className="btn-outline btn-sm" onClick={()=>loadAll()}>{loading?"⏳":"🔄"}</button><button className="btn-outline btn-outline-red btn-sm" onClick={handleLogout}>Déconnexion</button></div>
+      <div className="header-left">
+        <div className="logo-mark">&#9992;</div>
+        <div><div className="header-title">Suivi des Audits — DGAC</div><div className="header-sub">Direction Generale de l'Aviation Civile</div></div>
+      </div>
+      <div className="desktop-tabs">{tabs.map(t=><button key={t.id} className={"tab-btn "+(tab===t.id?"active":"")} onClick={()=>setTab(t.id)}><span>{t.icon}</span> {t.label}{t.count>0&&<span className="tab-count">{t.count}</span>}{t.alert>0&&<span className="tab-alert">{t.alert}</span>}</button>)}</div>
+      <div className="header-right" style={{display:"flex",gap:6,alignItems:"center"}}>
+        {totalAlerts>0&&<button className="btn btn-red btn-sm" onClick={()=>setShowAlerts(true)}>{totalAlerts} alerte{totalAlerts>1?"s":""}</button>}
+        <div className="user-badge"><div className="user-dot"/>{user.email}</div>
+        <button className="btn-outline btn-sm" onClick={()=>loadAll()}>{loading?"\u23F3":"\u21BB"}</button>
+        <button className="btn-outline btn-outline-red btn-sm" onClick={handleLogout}>Sortir</button>
+      </div>
     </header>
-    <nav className="mobile-nav">{tabs.map(t=>(<button key={t.id} className={`mobile-nav-btn ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}><span className="nav-icon">{t.icon}</span>{t.ml}{t.count>0&&tab!==t.id&&<span className="nav-badge">{t.count}</span>}</button>))}<button className="mobile-nav-btn" onClick={handleLogout}><span className="nav-icon">🚪</span>Sortir</button></nav>
-    {error&&<div className="error-box" style={{margin:'12px 16px 0'}}>{error}</div>}
-    <main style={{padding:'24px 28px',maxWidth:1360,margin:'0 auto'}}>
-      {tab==="dashboard"&&<Dashboard audits={audits} findings={findings} capa={capas} preuves={preuves} agrements={agrements} autorisations={autorisations} onNav={setTab}/>}
+    <nav className="mobile-nav">
+      {tabs.slice(0,6).map(t=><button key={t.id} className={"mobile-nav-btn "+(tab===t.id?"active":"")} onClick={()=>setTab(t.id)}><span className="nav-icon">{t.icon}</span>{t.ml}{(t.alert>0||t.count>0)&&tab!==t.id&&<span className="nav-badge">{t.alert||t.count}</span>}</button>)}
+      <button className="mobile-nav-btn" onClick={()=>setTab(tab==="planning"?"autorisations":"planning")}><span className="nav-icon">{tab==="planning"?"\u2714":"\uD83D\uDCC5"}</span>{tab==="planning"?"Autor.":"Plan."}</button>
+      <button className="mobile-nav-btn" onClick={handleLogout}><span className="nav-icon">&#x1F6AA;</span>Sortir</button>
+    </nav>
+    {error&&<div className="error-box" style={{margin:"10px 14px 0"}}>{error}</div>}
+    <main style={{padding:"24px 28px",maxWidth:1400,margin:"0 auto"}}>
+      {tab==="dashboard"&&<Dashboard audits={audits} findings={findings} capas={capas} preuves={preuves} agrements={agrements} autorisations={autorisations} onNav={setTab}/>}
       {tab==="audits"&&<AuditsView api={api} audits={audits} findings={findings} reload={()=>loadAll()}/>}
-      {tab==="findings"&&<FindingsView api={api} audits={audits} findings={findings} preuves={preuves} reload={()=>loadAll()}/>}
-      {tab==="capa"&&<CapaView api={api} findings={findings} capas={capas} reload={()=>loadAll()}/>}
-      {tab==="preuves"&&<PreuvesView api={api} findings={findings} capas={capas} preuves={preuves} reload={()=>loadAll()}/>}
-      {tab==="agrements"&&<AgrementsView api={api} audits={audits} agrements={agrements} renouvellements={renouvellements} reload={()=>loadAll()}/>}
+      {tab==="findings"&&<FindingsView api={api} audits={audits} findings={findings} reload={()=>loadAll()}/>}
+      {tab==="capa"&&<CAPAView api={api} findings={findings} capas={capas} reload={()=>loadAll()}/>}
+      {tab==="preuves"&&<PreuvesView api={api} capas={capas} preuves={preuves} reload={()=>loadAll()}/>}
+      {tab==="agrements"&&<AgrementsView api={api} agrements={agrements} autorisations={autorisations} audits={audits} reload={()=>loadAll()}/>}
       {tab==="autorisations"&&<AutorisationsView api={api} agrements={agrements} autorisations={autorisations} reload={()=>loadAll()}/>}
+      {tab==="planning"&&<PlanningView agrements={agrements} audits={audits}/>}
     </main>
+    {showAlerts&&<AlertPopup agrements={agrements} capas={capas} onClose={()=>setShowAlerts(false)}/>}
   </div>)
 }
-ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(r => console.log('SW registered')).catch(e => console.log('SW failed', e));
-  });
-}
+
+ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
+
 </script>
 </body>
 </html>
